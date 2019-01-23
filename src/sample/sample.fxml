@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+
+<BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+ <top>
+    <MenuBar BorderPane.alignment="CENTER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#openImageFile" text="Open File" />
+                <MenuItem mnemonicParsing="false" onAction="#closeApp" text="Close" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#revertImgToOriginal" text="Original" />
+                  <CheckMenuItem fx:id="grayscaleMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Grayscale" />
+                  <CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />
+                  <CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />
+                  <CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#printAbout" text="About Image" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+ </top>
+ <center>
+      <ScrollPane fx:id="imageScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+          <FlowPane fx:id="imagePane">
+             <children>
+                <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
+             </children>
+          </FlowPane>
+         </content>
+      </ScrollPane>
+ </center>
+</BorderPane>
