@@ -69,6 +69,29 @@ public class Controller {
         alert.showAndWait();
     }
 
+    private Image getModifiedImage(boolean red, boolean green, boolean blue, boolean gray){
+        if(imageLoaded == null) return new WritableImage(1,1); //TODO: Change to null and check on set?
+        PixelReader pixelReader = imageLoaded.getPixelReader();
+        WritableImage writableImage = new WritableImage((int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+        Color color;
+
+        for (int i = 0; i < writableImage.getWidth(); i++) {
+            for (int j = 0; j < writableImage.getHeight(); j++) {
+                double r = red ? pixelReader.getColor(i, j).getRed() : 0;
+                double g = green ? pixelReader.getColor(i, j).getGreen() : 0;
+                double b = blue ? pixelReader.getColor(i, j).getBlue() : 0;
+                double a = pixelReader.getColor(i, j).getOpacity();
+
+                color = gray ? pixelReader.getColor(i, j).grayscale() :
+                        (!red && !green && !blue) ? pixelReader.getColor(i,j) : new Color(r, g, b, a);
+                pixelWriter.setColor(i, j, color);
+            }
+        }
+
+        return writableImage;
+    }
+
     public void setImageResizable() {
 
         mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
@@ -77,34 +100,16 @@ public class Controller {
 
     @FXML
     private void revertImgToOriginal(ActionEvent actionEvent) {
-        mainImageView.setImage(new WritableImage(1, 1));
+        mainImageView.setImage(imageLoaded);
+        redChannelMenuItem.setSelected(false);
+        greenChannelMenuItem.setSelected(false);
+        blueChannelMenuItem.setSelected(false);
     }
 
     @FXML
     private void setModifiedImage(ActionEvent actionEvent) {
         double timerStart = System.currentTimeMillis();
-
-        if(imageLoaded == null) return;
-        PixelReader pixelReader = imageLoaded.getPixelReader();
-        WritableImage writableImage = new WritableImage((int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-        Color color;
-
-        for (int i = 0; i < writableImage.getWidth(); i++) {
-            for (int j = 0; j < writableImage.getHeight(); j++) {
-                double red = redChannelMenuItem.isSelected() ? pixelReader.getColor(i, j).getRed() : 0;
-                double green = greenChannelMenuItem.isSelected() ? pixelReader.getColor(i, j).getGreen() : 0;
-                double blue = blueChannelMenuItem.isSelected() ? pixelReader.getColor(i, j).getBlue() : 0;
-                double alpha = pixelReader.getColor(i, j).getOpacity();
-
-                color = grayscaleMenuItem.isSelected() ? pixelReader.getColor(i, j).grayscale() :
-                        (!redChannelMenuItem.isSelected() && !greenChannelMenuItem.isSelected() && !blueChannelMenuItem.isSelected()) ? pixelReader.getColor(i,j) : new Color(red, green, blue, alpha);
-                pixelWriter.setColor(i, j, color);
-            }
-        }
-
-        mainImageView.setImage(writableImage);
-
+        mainImageView.setImage(getModifiedImage(redChannelMenuItem.isSelected(), greenChannelMenuItem.isSelected(), blueChannelMenuItem.isSelected(), grayscaleMenuItem.isSelected()));
         System.out.println(System.currentTimeMillis() - timerStart);
     }
 }

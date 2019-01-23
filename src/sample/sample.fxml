@@ -21,7 +21,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#revertImgToOriginal" text="Original" />
+            <MenuItem mnemonicParsing="false" onAction="#revertImgToOriginal" text="Reset" />
                   <CheckMenuItem fx:id="grayscaleMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Grayscale" />
                   <CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />
                   <CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />
