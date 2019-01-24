@@ -2,19 +2,26 @@ package sample;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -170,5 +177,52 @@ public class Controller {
 
     @FXML
     private void viewChannels(ActionEvent actionEvent) {
+        Stage stage = rgbChannelsView();
+        if(stage != null) rgbChannelsView().show();
+    }
+
+    private Stage rgbChannelsView(){
+        if(imageLoaded == null) return null;
+
+        Stage stage = new Stage();
+        stage.setTitle("RGB Channels");
+        stage.setResizable(false);
+
+        int stageWidth, stageHeight;
+        ImageView redChannel = new ImageView();
+        ImageView greenChannel = new ImageView();
+        ImageView blueChannel = new ImageView();
+        int screenWidth = (int)Screen.getPrimary().getBounds().getWidth();
+        int screenHeight = (int)Screen.getPrimary().getBounds().getHeight();
+
+        if(imageLoaded.getWidth()*3 >= screenWidth && imageLoaded.getWidth() > imageLoaded.getHeight()){
+            redChannel.setFitWidth(screenWidth/3);
+            double ratio = imageLoaded.getWidth()/redChannel.getFitWidth();
+            redChannel.setFitHeight(imageLoaded.getHeight()/ratio);
+            greenChannel.setFitWidth(screenWidth/3);
+            greenChannel.setFitHeight(imageLoaded.getHeight()/ratio);
+            blueChannel.setFitWidth(screenWidth/3);
+            blueChannel.setFitHeight(imageLoaded.getHeight()/ratio);
+        }
+
+        if(imageLoaded.getHeight() >= screenHeight && imageLoaded.getHeight() >= imageLoaded.getWidth()){
+            redChannel.setFitHeight(screenHeight);
+            double ratio = imageLoaded.getHeight()/redChannel.getFitHeight();
+            redChannel.setFitWidth(imageLoaded.getWidth()/ratio);
+            greenChannel.setFitHeight(screenHeight);
+            greenChannel.setFitWidth(imageLoaded.getWidth()/ratio);
+            blueChannel.setFitHeight(screenHeight);
+            blueChannel.setFitWidth(imageLoaded.getWidth()/ratio);
+        }
+
+        redChannel.setImage(getModifiedImage(true, false,false,false));
+        greenChannel.setImage(getModifiedImage(false,true,false,false));
+        blueChannel.setImage(getModifiedImage(false,false,true, false));
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(redChannel, greenChannel, blueChannel);
+
+        Scene scene = new Scene(hBox, redChannel.getFitWidth()*3, redChannel.getFitHeight());
+        stage.setScene(scene);
+        return stage;
     }
 }
