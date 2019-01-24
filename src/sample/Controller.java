@@ -1,7 +1,12 @@
 package sample;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ScrollPane;
@@ -13,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Controller {
     @FXML
@@ -25,6 +31,10 @@ public class Controller {
     private ImageView mainImageView;
     @FXML
     private BorderPane mainBorderPane;
+
+    private SimpleDoubleProperty redChannel = new SimpleDoubleProperty(100);
+    private SimpleDoubleProperty greenChannel = new SimpleDoubleProperty(100);
+    private SimpleDoubleProperty blueChannel = new SimpleDoubleProperty(100);
 
     private Stage mainStage;
     public void setMainStage(Stage mainStage) {
@@ -70,7 +80,7 @@ public class Controller {
     }
 
     private Image getModifiedImage(boolean red, boolean green, boolean blue, boolean gray){
-        if(imageLoaded == null) return new WritableImage(1,1); //TODO: Change to null and check on set?
+        if(imageLoaded == null) return null;
         PixelReader pixelReader = imageLoaded.getPixelReader();
         WritableImage writableImage = new WritableImage((int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
@@ -106,10 +116,59 @@ public class Controller {
         blueChannelMenuItem.setSelected(false);
     }
 
+    public void sliderChanged(){
+        if (imageLoaded == null) return;
+        PixelReader pixelReader = imageLoaded.getPixelReader();
+        WritableImage writableImage = new WritableImage((int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        for (int i = 0; i < writableImage.getWidth(); i++) {
+            for (int j = 0; j < writableImage.getHeight(); j++) {
+                double red = pixelReader.getColor(i, j).getRed()*(redChannel.getValue()/100);
+                double green = pixelReader.getColor(i, j).getGreen()*(greenChannel.getValue()/100);
+                double blue = pixelReader.getColor(i, j).getBlue()*(blueChannel.getValue()/100);
+
+                pixelWriter.setColor(i, j, new Color(red, green, blue, 1));
+            }
+        }
+        mainImageView.setImage(writableImage);
+    }
+
     @FXML
     private void setModifiedImage(ActionEvent actionEvent) {
-        double timerStart = System.currentTimeMillis();
-        mainImageView.setImage(getModifiedImage(redChannelMenuItem.isSelected(), greenChannelMenuItem.isSelected(), blueChannelMenuItem.isSelected(), grayscaleMenuItem.isSelected()));
-        System.out.println(System.currentTimeMillis() - timerStart);
+        double timerStart = System.nanoTime();
+        Image imageToShow = getModifiedImage(redChannelMenuItem.isSelected(), greenChannelMenuItem.isSelected(), blueChannelMenuItem.isSelected(), grayscaleMenuItem.isSelected());
+        if(imageToShow != null) mainImageView.setImage(imageToShow);
+        System.out.println(System.nanoTime() - timerStart);
+    }
+
+    @FXML
+    private void viewSliders(ActionEvent actionEvent) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("sliders.fxml"));
+        Parent root;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        SlidersController controller = loader.getController();
+
+        redChannel.bind(controller.getRedSlider().valueProperty());
+        greenChannel.bind(controller.getGreenSlider().valueProperty());
+        blueChannel.bind(controller.getBlueSlider().valueProperty());
+
+        Stage sliderStage = new Stage();
+        sliderStage.setTitle("Sliders?");
+        sliderStage.setX(mainStage.getX()+mainStage.getWidth());
+        sliderStage.setY(mainStage.getY());
+        sliderStage.setScene(new Scene(root, 300, 75));
+        controller.addSliderListeners();
+        controller.setSourceController(this);
+        sliderStage.show();
+    }
+
+    @FXML
+    private void viewChannels(ActionEvent actionEvent) {
     }
 }

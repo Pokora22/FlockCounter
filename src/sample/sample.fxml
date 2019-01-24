@@ -5,6 +5,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -26,6 +27,9 @@
                   <CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />
                   <CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />
                   <CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#viewSliders" text="View Color Sliders" />
+                  <MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
