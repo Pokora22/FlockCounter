@@ -11,19 +11,15 @@ public class SlidersController {
     @FXML
     private Label redValueLabel, greenValueLabel, blueValueLabel, brightnessValueLabel, contrastValueLabel, saturationValueLabel;
 
-    private Controller sourceController;
-
-    SlidersController(Controller sourceController){
-        this.sourceController = sourceController;
-    }
-
-
-    //TODO: Try constructor load?
-
-
-//    public void setSourceController(Controller sourceController) {
+//    SlidersController(Controller sourceController){
 //        this.sourceController = sourceController;
 //    }
+
+    private Controller sourceController;
+
+    public void setSourceController(Controller sourceController) {
+        this.sourceController = sourceController;
+    }
 
     public void addSliderListeners(){
         Label[] labels = {redValueLabel, greenValueLabel, blueValueLabel}; //, brightnessValueLabel, saturationValueLabel, contrastValueLabel
