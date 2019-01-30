@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.javafx.iio.ImageMetadata;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
@@ -49,6 +50,7 @@ public class Controller {
     }
 
     private Image imageLoaded;
+    private File selectedFile;
 
     public void openImageFile(ActionEvent actionEvent) {
 
@@ -57,7 +59,7 @@ public class Controller {
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.gif", "*.bmp"));
 
-        File selectedFile = fileChooser.showOpenDialog(mainStage);
+        selectedFile = fileChooser.showOpenDialog(mainStage);
         if (selectedFile != null) {
             imageLoaded = new Image(selectedFile.toURI().toString());
         }
@@ -71,16 +73,16 @@ public class Controller {
 
     @FXML
     private void printAbout(ActionEvent actionEvent) {
-        File fileQuestioned = imageLoaded != null? new File(imageLoaded.getUrl()) : null;
+        //File fileQuestioned = imageLoaded != null? new File(imageLoaded.getUrl()) : null;
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Image Information");
-        if (fileQuestioned == null){
+        if (selectedFile == null){
             alert.setHeaderText("");
             alert.setContentText("No Image Loaded!");
         }
         else{
-            alert.setHeaderText(fileQuestioned.getName());
-            alert.setContentText("Resolution " + imageLoaded.getWidth() + " x " + imageLoaded.getHeight());
+            alert.setHeaderText(selectedFile.getName());
+            alert.setContentText("Resolution " + imageLoaded.getWidth() + " x " + imageLoaded.getHeight() +"\nFile size: " + selectedFile.length() + " bytes");
         }
 
         alert.showAndWait();
@@ -177,16 +179,26 @@ public class Controller {
 
     @FXML
     private void viewChannels(ActionEvent actionEvent) {
-        Stage stage = rgbChannelsView();
-        if(stage != null) rgbChannelsView().show();
+        if(imageLoaded == null){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Image Information");
+            alert.setHeaderText("");
+            alert.setContentText("No Image Loaded!");
+            alert.showAndWait();
+            return;
+        }
+        rgbChannelsView().show();
     }
 
     private Stage rgbChannelsView(){
+        long timeStart = System.currentTimeMillis();
         if(imageLoaded == null) return null;
 
         Stage stage = new Stage();
-        stage.setTitle("RGB Channels");
+
         stage.setResizable(false);
+
+
 
         int stageWidth, stageHeight;
         ImageView redChannel = new ImageView();
@@ -223,6 +235,8 @@ public class Controller {
 
         Scene scene = new Scene(hBox, redChannel.getFitWidth()*3, redChannel.getFitHeight());
         stage.setScene(scene);
+
+        stage.setTitle("RGB Channels (generated in: " + ((System.currentTimeMillis() - timeStart)/1000f) +" seconds)");
         return stage;
     }
 }
