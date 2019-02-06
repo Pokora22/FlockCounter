@@ -70,6 +70,27 @@ public class Controller {
 
     }
 
+    private void getNearbySet(Image image){
+        boolean previousNeighbour = false;
+        PixelReader r = image.getPixelReader();
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) { //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
+                boolean foundNeighbour = (r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) || //LEFT
+                        r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //LEFT-UP
+                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //UP
+                        r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) || // UP-RIGHT
+                        r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) || //RIGHT
+                        r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j+1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //DOWN-RIGHT
+                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j+1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //DOWN
+                        r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j+1, 0 , (int)image.getHeight())).equals(Color.BLACK)); //LEFT-DOWN
+            }
+        }
+    }
+
+    private int clamp(int integer, int min, int max){
+        return integer < min ? 0 : integer > max ? max : integer;
+    }
+
     private Image getBnWImage(){
         if(imageLoaded == null) return null;
         PixelReader pixelReader = imageLoaded.getPixelReader();
