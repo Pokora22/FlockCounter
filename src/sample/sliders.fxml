@@ -10,7 +10,7 @@
    <center>
       <VBox>
          <children>
-            <Slider fx:id="redSlider" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
+            <Slider fx:id="brightnessThresholdSlider" majorTickUnit="1.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
             <Slider fx:id="greenSlider" layoutX="10.0" layoutY="10.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
             <Slider fx:id="blueSlider" layoutX="10.0" layoutY="24.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
             <!--<Slider fx:id="blueSlider1" layoutX="10.0" layoutY="38.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
@@ -22,7 +22,7 @@
    <right>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="redValueLabel" minHeight="-Infinity" prefHeight="20.0" text="Label" />
+            <Label fx:id="brightnessThresholdLabel" minHeight="-Infinity" prefHeight="20.0" text="Label" />
             <Label fx:id="greenValueLabel" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />
             <Label fx:id="blueValueLabel" layoutX="10.0" layoutY="27.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />
             <!--<Label fx:id="brightnessValueLabel" layoutX="10.0" layoutY="44.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->

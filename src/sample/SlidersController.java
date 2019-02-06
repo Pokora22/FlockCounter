@@ -1,19 +1,20 @@
 package sample;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.TextAlignment;
 
 public class SlidersController {
     @FXML
-    private Slider redSlider, greenSlider, blueSlider, brightnessSlider, contrastSlider, saturationSlider;
+    private Slider brightnessThresholdSlider, greenSlider, blueSlider;
     @FXML
-    private Label redValueLabel, greenValueLabel, blueValueLabel, brightnessValueLabel, contrastValueLabel, saturationValueLabel;
+    private Label brightnessThresholdLabel, greenValueLabel, blueValueLabel;
 
-//    SlidersController(Controller sourceController){
-//        this.sourceController = sourceController;
-//    }
 
     private Controller sourceController;
 
@@ -22,31 +23,25 @@ public class SlidersController {
     }
 
     public void addSliderListeners(){
-        Label[] labels = {redValueLabel, greenValueLabel, blueValueLabel}; //, brightnessValueLabel, saturationValueLabel, contrastValueLabel
+        Label[] labels = {brightnessThresholdLabel, greenValueLabel, blueValueLabel}; //, brightnessValueLabel, saturationValueLabel, contrastValueLabel
         for(Label l: labels){
             l.setMinWidth(40);
             l.setTextAlignment(TextAlignment.RIGHT);
             l.setText("100");
         }
 
-        redSlider.valueProperty().addListener(e->{
-            redValueLabel.setText(String.valueOf((redSlider.valueProperty().intValue())));
-            sourceController.sliderChanged();
+        brightnessThresholdSlider.valueProperty().addListener((observable, wasChanging, isChanging)-> brightnessThresholdLabel.setText(String.valueOf((brightnessThresholdSlider.valueProperty().intValue()))));
+        brightnessThresholdSlider.valueChangingProperty().addListener((observableValue, wasChanging, isChanging) -> {
+            if(!isChanging) sourceController.setModifiedImage(new ActionEvent());
         });
 
-        greenSlider.valueProperty().addListener((e->{
-            greenValueLabel.setText(String.valueOf(greenSlider.valueProperty().intValue()));
-            sourceController.sliderChanged();
-        }));
+        greenSlider.valueProperty().addListener((e-> greenValueLabel.setText(String.valueOf(greenSlider.valueProperty().intValue()))));
 
-        blueSlider.valueProperty().addListener((e->{
-            blueValueLabel.setText(String.valueOf(blueSlider.valueProperty().intValue()));
-            sourceController.sliderChanged();
-        }));
+        blueSlider.valueProperty().addListener((e-> blueValueLabel.setText(String.valueOf(blueSlider.valueProperty().intValue()))));
     }
 
-    public Slider getRedSlider() {
-        return redSlider;
+    public Slider getBrightnessThresholdSlider() {
+        return brightnessThresholdSlider;
     }
 
     public Slider getGreenSlider() {

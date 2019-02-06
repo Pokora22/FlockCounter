@@ -23,18 +23,18 @@
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#revertImgToOriginal" text="Reset" />
-                  <CheckMenuItem fx:id="grayscaleMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Grayscale" />
-                  <CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />
-                  <CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />
-                  <CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />
+                  <CheckMenuItem fx:id="bnwMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="View in Black and White" />
+                  <!--<CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />-->
+                  <!--<CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />-->
+                  <!--<CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#viewSliders" text="View Color Sliders" />
-                  <MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />
+                  <!--<MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />-->
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#printAbout" text="About Image" />
+            <!--<MenuItem mnemonicParsing="false" onAction="#printAbout" text="About Image" />-->
           </items>
         </Menu>
       </menus>
