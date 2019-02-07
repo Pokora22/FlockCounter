@@ -29,6 +29,7 @@
                   <!--<CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#viewSliders" text="View Color Sliders" />
+                  <MenuItem mnemonicParsing="false" onAction="#test" text="Test" />
                   <!--<MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />-->
           </items>
         </Menu>
