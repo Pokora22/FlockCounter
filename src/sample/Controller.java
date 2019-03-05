@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -33,7 +32,7 @@ public class Controller {
     @FXML
     private BorderPane mainBorderPane;
 
-    private SimpleDoubleProperty brightnessThreshold = new SimpleDoubleProperty(50);
+
     private SimpleDoubleProperty greenChannel = new SimpleDoubleProperty(100);
     private SimpleDoubleProperty blueChannel = new SimpleDoubleProperty(100);
 
@@ -44,6 +43,8 @@ public class Controller {
 
     private Image imageLoaded;
     private File selectedFile;
+    private ImageProcessor imgProc;
+
     private ArrayList<ArrayList<Pixel>> sets = new ArrayList<>();
 
     @FXML
@@ -65,6 +66,7 @@ public class Controller {
         }
 
         resetMenuTicks();
+        imgProc = new ImageProcessor(imageLoaded);
         mainImageView.setImage(imageLoaded);
     }
 
@@ -73,6 +75,8 @@ public class Controller {
 
     }
 
+
+    //////////////////////////////////////////////// Sets stuff
     private int getNumberOfSets(Image image){
 //        int sets = 0;
         boolean previousNeighbour = false;
@@ -87,21 +91,6 @@ public class Controller {
         return sets.size();
     }
 
-    private void drawBounds(){
-        for(ArrayList<Pixel> set : sets){
-            int x = set.get(0).getWidth();
-            int y = set.get(0).getHeight();
-            int width = set.get(set.size()-1).getWidth() - x;
-            int height = set.get(set.size()-1).getHeight() - y;
-
-            Rectangle boundBox = new Rectangle(x, y, width, height);
-            System.out.println("Image pane size: " + imagePane.getWidth() + ":" + imagePane.getHeight());
-//            pa.getChildren().addAll(boundBox);
-
-            System.out.println(boundBox);
-        }
-    }
-
     private ArrayList<Pixel> getSetContainingPixel(Pixel pixel){
         for(ArrayList<Pixel> set : sets){
             if(set.contains(pixel)){
@@ -114,47 +103,17 @@ public class Controller {
     }
 
     private ArrayList<Pixel> getNeighbourSet(Image image, PixelReader r, int i, int j) {
-//                        r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) || //RIGHT
-//                        r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j+1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //DOWN-RIGHT
-//                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j+1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //DOWN
-//                        r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j+1, 0 , (int)image.getHeight())).equals(Color.BLACK)); //LEFT-DOWN
-//         if(r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) || //LEFT
-//                            r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //LEFT-UP
-//                            r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) || //UP
-//                            r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK));
-
-         return r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j)) :
-                 r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j-1)) :
-                 r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i, j-1)) :
-                 r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i+1, j-1)) :
-                 getSetContainingPixel(new Pixel(i, j));
+        return r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j)) :
+                r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j-1)) :
+                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i, j-1)) :
+                                r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i+1, j-1)) :
+                                        getSetContainingPixel(new Pixel(i, j));
 
     }
-
 
     private int clamp(int integer, int min, int max){
         max--; //Quick and dirty fix
         return integer < min ? 0 : integer > max ? max : integer;
-    }
-
-    private Image getBnWImage(){
-        if(imageLoaded == null) return null;
-        PixelReader pixelReader = imageLoaded.getPixelReader();
-        WritableImage writableImage = new WritableImage((int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-
-        for(int i = 0; i < writableImage.getWidth(); i++){
-            for (int j = 0; j < writableImage.getHeight(); j++){
-                pixelWriter.setColor(i, j, isColorOverThreshold(pixelReader.getColor(i,j)) ? Color.WHITE : Color.BLACK);
-            }
-        }
-
-        return writableImage;
-    }
-
-    private boolean isColorOverThreshold(Color color){
-//        System.out.println(((color.getBlue() + color.getGreen() + color.getRed())/3));
-        return ((color.getBlue() + color.getGreen() + color.getRed())/3) > brightnessThreshold.getValue()/100f;
     }
 
     public void setImageResizable() {
@@ -173,7 +132,7 @@ public class Controller {
     }
 
     public void setModifiedImage(ActionEvent actionEvent) {
-        Image imageToShow = bnwMenuItem.isSelected() ? getBnWImage() : imageLoaded;
+        Image imageToShow = bnwMenuItem.isSelected() ? imgProc.getBnWImage() : imageLoaded;
         if(imageToShow != null) mainImageView.setImage(imageToShow);
     }
 
@@ -189,7 +148,7 @@ public class Controller {
         }
         SlidersController controller = loader.getController();
 
-        brightnessThreshold.bind(controller.getBrightnessThresholdSlider().valueProperty());
+        imgProc.bindBrightnessSlider(controller.getBrightnessThresholdSlider().valueProperty());
         greenChannel.bind(controller.getGreenSlider().valueProperty());
         blueChannel.bind(controller.getBlueSlider().valueProperty());
 
@@ -204,7 +163,7 @@ public class Controller {
     }
 
     public void test(ActionEvent actionEvent) {
-        System.out.println(getNumberOfSets(getBnWImage()));
-        drawBounds();
+        System.out.println(getNumberOfSets(imageLoaded));
+//        imgProc.drawBounds(sets);
     }
 }
