@@ -45,7 +45,8 @@ public class Controller {
     private File selectedFile;
     private ImageProcessor imgProc;
 
-    private ArrayList<ArrayList<Pixel>> sets = new ArrayList<>();
+//    private ArrayList<ArrayList<Pixel>> sets = new ArrayList<>();
+    int[][][] sets; //4.5 GB ? No thanks
 
     @FXML
     private void openImageFile(ActionEvent actionEvent) {
@@ -67,9 +68,8 @@ public class Controller {
 
         resetMenuTicks();
         imgProc = new ImageProcessor(imageLoaded);
+        sets = new int[(int)imageLoaded.getHeight()*(int)imageLoaded.getWidth()][(int)imageLoaded.getHeight()*(int)imageLoaded.getWidth()][3];
         mainImageView.setImage(imageLoaded);
-
-        System.out.println("org img: " + imageLoaded.getWidth() + "x" + imageLoaded.getHeight());
     }
 
     @FXML
@@ -79,41 +79,45 @@ public class Controller {
 
     //////////////////////////////////////////////// Sets stuff
     private int getNumberOfSets(Image image){
-//        int sets = 0;
+        int setIndex = 0;
+        int pixelIndex = 0;
         boolean previousNeighbour = false;
         PixelReader r = image.getPixelReader();
 
         for (int y = 0; y < image.getHeight(); y++){
             for (int x = 0; x < image.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
                 if (imgProc.isColorOverThreshold(r.getColor(x, y))){
-//                    System.out.println("Adding pixel: " + x + " : " + y);
-                    getNeighbourSet(image, r, x, y).add(new Pixel(x, y));
+                    sets[setIndex][pixelIndex][0] = 0;
+                    sets[setIndex][pixelIndex][1] = x;
+                    sets[setIndex][pixelIndex][2] = y;
+                    pixelIndex++;
                 }
+                else setIndex++; //TODO: No! Not per line...
             }
             System.out.println("Line: " + y);
         }
-        return sets.size();
+        return setIndex;
     }
 
-    private ArrayList<Pixel> getSetContainingPixel(Pixel pixel){
-        for(ArrayList<Pixel> set : sets){
-            if(set.contains(pixel)){
-                return set;
-            }
-        }
-        ArrayList<Pixel> newSet = new ArrayList<>();
-        sets.add(newSet);
-        return newSet;
-    }
-
-    private ArrayList<Pixel> getNeighbourSet(Image image, PixelReader r, int i, int j) {
-        return r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j)) :
-                r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j-1)) :
-                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i, j-1)) :
-                                r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i+1, j-1)) :
-                                        getSetContainingPixel(new Pixel(i, j));
-
-    }
+//    private ArrayList<Pixel> getSetContainingPixel(Pixel pixel){
+//        for(ArrayList<Pixel> set : sets){
+//            if(set.contains(pixel)){
+//                return set;
+//            }
+//        }
+//        ArrayList<Pixel> newSet = new ArrayList<>();
+//        sets.add(newSet);
+//        return newSet;
+//    }
+//
+//    private ArrayList<Pixel> getNeighbourSet(Image image, PixelReader r, int i, int j) {
+//        return r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j)) :
+//                r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j-1)) :
+//                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i, j-1)) :
+//                                r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i+1, j-1)) :
+//                                        getSetContainingPixel(new Pixel(i, j));
+//
+//    }
 
     private int clamp(int integer, int min, int max){
         max--; //Quick and dirty fix

@@ -20,7 +20,7 @@ public class ImageProcessor {
         this.imageLoaded = imageLoaded;
     }
 
-    public Image drawBounds(ArrayList<ArrayList<Pixel>> sets){
+    public Image drawBounds(int[][][] sets){
         int minX = (int)imageLoaded.getWidth();
         int maxX = 0;
         int minY = (int)imageLoaded.getHeight();
@@ -28,15 +28,15 @@ public class ImageProcessor {
         WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        System.out.println("org img: " + imageLoaded.getWidth() + "x" + imageLoaded.getHeight());
+//        System.out.println("org img: " + imageLoaded.getWidth() + "x" + imageLoaded.getHeight());
 
-        for (ArrayList<Pixel> set : sets) {
-            for(Pixel p : set){
-                minX = p.getWidth() < minX ? p.getWidth() : minX;
-                maxX = p.getWidth() > maxX ? p.getWidth() : maxX;
+        for (int[][] set: sets) {
+            for (int[] pixel : set) {
+                minX = pixel[1] < minX ? pixel[1] : minX;
+                maxX = pixel[1] > maxX ? pixel[1] : maxX;
 
-                minY = p.getHeight() < minY ? p.getHeight() : minY;
-                maxY = p.getHeight() > maxY ? p.getHeight() : maxY;
+                minY = pixel[2] < minY ? pixel[2] : minY;
+                maxY = pixel[2] > maxY ? pixel[2] : maxY;
             }
 
             for(int x = minX; x < maxX; x++) {
@@ -47,13 +47,6 @@ public class ImageProcessor {
                 pixelWriter.setColor(y, minX, Color.RED);
                 pixelWriter.setColor(y, maxX, Color.RED);
             }
-        }
-
-        for(ArrayList<Pixel> set : sets){
-            int x = set.get(0).getWidth();
-            int y = set.get(0).getHeight();
-            int width = set.get(set.size()-1).getWidth() - x;
-            int height = set.get(set.size()-1).getHeight() - y;
         }
 
         return writableImage;
