@@ -68,6 +68,8 @@ public class Controller {
         resetMenuTicks();
         imgProc = new ImageProcessor(imageLoaded);
         mainImageView.setImage(imageLoaded);
+
+        System.out.println("org img: " + imageLoaded.getWidth() + "x" + imageLoaded.getHeight());
     }
 
     @FXML
@@ -75,18 +77,20 @@ public class Controller {
 
     }
 
-
     //////////////////////////////////////////////// Sets stuff
     private int getNumberOfSets(Image image){
 //        int sets = 0;
         boolean previousNeighbour = false;
         PixelReader r = image.getPixelReader();
-        for (int i = 0; i < image.getWidth(); i++) {
-            for (int j = 0; j < image.getHeight(); j++) { //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
-                if (r.getColor(i, j).equals(Color.BLACK)){
-                    getNeighbourSet(image, r, i, j).add(new Pixel(i, j));
+
+        for (int y = 0; y < image.getHeight(); y++){
+            for (int x = 0; x < image.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
+                if (imgProc.isColorOverThreshold(r.getColor(x, y))){
+//                    System.out.println("Adding pixel: " + x + " : " + y);
+                    getNeighbourSet(image, r, x, y).add(new Pixel(x, y));
                 }
             }
+            System.out.println("Line: " + y);
         }
         return sets.size();
     }
@@ -164,6 +168,6 @@ public class Controller {
 
     public void test(ActionEvent actionEvent) {
         System.out.println(getNumberOfSets(imageLoaded));
-//        imgProc.drawBounds(sets);
+        mainImageView.setImage(imgProc.drawBounds(sets));
     }
 }

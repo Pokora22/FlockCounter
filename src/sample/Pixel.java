@@ -3,7 +3,7 @@ package sample;
 public class Pixel {
     private int height, width;
 
-    public Pixel(int height, int width){
+    public Pixel(int width, int height){
         this.height = height;
         this.width = width;
     }

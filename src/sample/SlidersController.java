@@ -23,7 +23,7 @@ public class SlidersController {
     }
 
     public void addSliderListeners(){
-        Label[] labels = {brightnessThresholdLabel, greenValueLabel, blueValueLabel}; //, brightnessValueLabel, saturationValueLabel, contrastValueLabel
+        Label[] labels = {brightnessThresholdLabel, greenValueLabel, blueValueLabel};
         for(Label l: labels){
             l.setMinWidth(40);
             l.setTextAlignment(TextAlignment.RIGHT);

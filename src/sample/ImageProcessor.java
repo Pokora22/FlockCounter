@@ -20,19 +20,43 @@ public class ImageProcessor {
         this.imageLoaded = imageLoaded;
     }
 
-    public void drawBounds(ArrayList<ArrayList<Pixel>> sets){
+    public Image drawBounds(ArrayList<ArrayList<Pixel>> sets){
+        int minX = (int)imageLoaded.getWidth();
+        int maxX = 0;
+        int minY = (int)imageLoaded.getHeight();
+        int maxY = 0;
+        WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        System.out.println("org img: " + imageLoaded.getWidth() + "x" + imageLoaded.getHeight());
+
+        for (ArrayList<Pixel> set : sets) {
+            for(Pixel p : set){
+                minX = p.getWidth() < minX ? p.getWidth() : minX;
+                maxX = p.getWidth() > maxX ? p.getWidth() : maxX;
+
+                minY = p.getHeight() < minY ? p.getHeight() : minY;
+                maxY = p.getHeight() > maxY ? p.getHeight() : maxY;
+            }
+
+            for(int x = minX; x < maxX; x++) {
+                pixelWriter.setColor(x, minY, Color.RED);
+                pixelWriter.setColor(x, maxY, Color.RED);
+            }
+            for(int y = minY; y < maxY; y++){
+                pixelWriter.setColor(y, minX, Color.RED);
+                pixelWriter.setColor(y, maxX, Color.RED);
+            }
+        }
+
         for(ArrayList<Pixel> set : sets){
             int x = set.get(0).getWidth();
             int y = set.get(0).getHeight();
             int width = set.get(set.size()-1).getWidth() - x;
             int height = set.get(set.size()-1).getHeight() - y;
-
-            Rectangle boundBox = new Rectangle(x, y, width, height);
-//            System.out.println("Image pane size: " + imagePane.getWidth() + ":" + imagePane.getHeight());
-//            pa.getChildren().addAll(boundBox);
-
-            System.out.println(boundBox);
         }
+
+        return writableImage;
     }
 
     public Image getBnWImage(){
@@ -52,6 +76,7 @@ public class ImageProcessor {
 
     public boolean isColorOverThreshold(Color color){
 //        System.out.println(((color.getBlue() + color.getGreen() + color.getRed())/3));
+//        System.out.println(brightnessThreshold.getValue()/100f);
         return ((color.getBlue() + color.getGreen() + color.getRed())/3) > brightnessThreshold.getValue()/100f;
     }
 
