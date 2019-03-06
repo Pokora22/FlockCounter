@@ -20,7 +20,7 @@ public class ImageProcessor {
         this.imageLoaded = imageLoaded;
     }
 
-    public Image drawBounds(int[][][] sets){
+    public Image drawBounds(int[] sets){
         int minX = (int)imageLoaded.getWidth();
         int maxX = 0;
         int minY = (int)imageLoaded.getHeight();
@@ -28,28 +28,33 @@ public class ImageProcessor {
         WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-//        System.out.println("org img: " + imageLoaded.getWidth() + "x" + imageLoaded.getHeight());
 
-        for (int[][] set: sets) {
-            for (int[] pixel : set) {
-                minX = pixel[1] < minX ? pixel[1] : minX;
-                maxX = pixel[1] > maxX ? pixel[1] : maxX;
+        //TODO: Enclose it in same set relations somehow...
+        for (int pixel: sets) {
+            minX = getPixelXY(pixel)[0] < minX ? getPixelXY(pixel)[0] : minX;
+            maxX = getPixelXY(pixel)[0] > maxX ? getPixelXY(pixel)[0] : maxX;
 
-                minY = pixel[2] < minY ? pixel[2] : minY;
-                maxY = pixel[2] > maxY ? pixel[2] : maxY;
-            }
+            minY = getPixelXY(pixel)[1] < minY ? getPixelXY(pixel)[1] : minY;
+            maxY = getPixelXY(pixel)[1] > maxY ? getPixelXY(pixel)[1] : maxY;
+        }
 
-            for(int x = minX; x < maxX; x++) {
-                pixelWriter.setColor(x, minY, Color.RED);
-                pixelWriter.setColor(x, maxY, Color.RED);
-            }
-            for(int y = minY; y < maxY; y++){
-                pixelWriter.setColor(y, minX, Color.RED);
-                pixelWriter.setColor(y, maxX, Color.RED);
-            }
+        for(int x = minX; x < maxX; x++) {
+            pixelWriter.setColor(x, minY, Color.RED);
+            pixelWriter.setColor(x, maxY, Color.RED);
+        }
+        for(int y = minY; y < maxY; y++){
+            pixelWriter.setColor(y, minX, Color.RED);
+            pixelWriter.setColor(y, maxX, Color.RED);
         }
 
         return writableImage;
+    }
+
+    private int[] getPixelXY(int pixel){
+        int[] xy = new int[2];
+
+
+        return xy;
     }
 
     public Image getBnWImage(){

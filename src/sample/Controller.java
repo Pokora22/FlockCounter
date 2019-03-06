@@ -16,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.sound.midi.Soundbank;
+import javax.swing.text.StyledEditorKit;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,9 +46,9 @@ public class Controller {
     private Image imageLoaded;
     private File selectedFile;
     private ImageProcessor imgProc;
-
-//    private ArrayList<ArrayList<Pixel>> sets = new ArrayList<>();
-    int[][][] sets; //4.5 GB ? No thanks
+    private int setIndex;
+    private PixelReader pixelReader;
+    int[] sets;
 
     @FXML
     private void openImageFile(ActionEvent actionEvent) {
@@ -68,8 +70,10 @@ public class Controller {
 
         resetMenuTicks();
         imgProc = new ImageProcessor(imageLoaded);
-        sets = new int[(int)imageLoaded.getHeight()*(int)imageLoaded.getWidth()][(int)imageLoaded.getHeight()*(int)imageLoaded.getWidth()][3];
+        sets = new int[(int)imageLoaded.getHeight()*(int)imageLoaded.getWidth()];
+        setIndex = 0; //?
         mainImageView.setImage(imageLoaded);
+        pixelReader = imageLoaded.getPixelReader();
     }
 
     @FXML
@@ -78,46 +82,33 @@ public class Controller {
     }
 
     //////////////////////////////////////////////// Sets stuff
-    private int getNumberOfSets(Image image){
-        int setIndex = 0;
-        int pixelIndex = 0;
-        boolean previousNeighbour = false;
-        PixelReader r = image.getPixelReader();
+    private int getNumberOfSets(){ //TODO: foreach in sets where int < 0, count++; return count
+        findBirds();
 
-        for (int y = 0; y < image.getHeight(); y++){
-            for (int x = 0; x < image.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
-                if (imgProc.isColorOverThreshold(r.getColor(x, y))){
-                    sets[setIndex][pixelIndex][0] = 0;
-                    sets[setIndex][pixelIndex][1] = x;
-                    sets[setIndex][pixelIndex][2] = y;
-                    pixelIndex++;
-                }
-                else setIndex++; //TODO: No! Not per line...
-            }
-            System.out.println("Line: " + y);
-        }
-        return setIndex;
+        int setCount = 0;
+        for(int r : sets) if(r < 0) setCount++;
+
+        return setCount;
     }
 
-//    private ArrayList<Pixel> getSetContainingPixel(Pixel pixel){
-//        for(ArrayList<Pixel> set : sets){
-//            if(set.contains(pixel)){
-//                return set;
-//            }
-//        }
-//        ArrayList<Pixel> newSet = new ArrayList<>();
-//        sets.add(newSet);
-//        return newSet;
-//    }
-//
-//    private ArrayList<Pixel> getNeighbourSet(Image image, PixelReader r, int i, int j) {
-//        return r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j)) :
-//                r.getColor(clamp(i-1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i-1, j-1)) :
-//                        r.getColor(clamp(i, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i, j-1)) :
-//                                r.getColor(clamp(i+1, 0, (int)image.getWidth()), clamp(j-1, 0 , (int)image.getHeight())).equals(Color.BLACK) ? getSetContainingPixel(new Pixel(i+1, j-1)) :
-//                                        getSetContainingPixel(new Pixel(i, j));
-//
-//    }
+
+    private void findBirds(){
+        for (int y = 0; y < imageLoaded.getHeight(); y++){
+            for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
+                if (imgProc.isColorOverThreshold(pixelReader.getColor(x, y))) sets[x*y] = getSetIndex(x, y);
+
+            }
+        }
+    }
+
+    private int getSetIndex(int x, int y) {
+        if(x > 0 && imgProc.isColorOverThreshold(pixelReader.getColor(x-1, y))) return (x)*(y+1); //Offset 0s ?
+        if(x > 0 && y > 0 && imgProc.isColorOverThreshold(pixelReader.getColor(x-1, y-1))) return x*y;
+        if(y > 0 && imgProc.isColorOverThreshold(pixelReader.getColor(x, y-1))) return (x+1)*y;
+        if(y > 0 && x < imageLoaded.getWidth()-1 && imgProc.isColorOverThreshold(pixelReader.getColor(x+1,y-1))) return (x+2)*(y); //offset width in relation to array
+
+        return --setIndex;
+    }
 
     private int clamp(int integer, int min, int max){
         max--; //Quick and dirty fix
@@ -171,7 +162,7 @@ public class Controller {
     }
 
     public void test(ActionEvent actionEvent) {
-        System.out.println(getNumberOfSets(imageLoaded));
+        System.out.println(getNumberOfSets());
         mainImageView.setImage(imgProc.drawBounds(sets));
     }
 }
