@@ -7,14 +7,12 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
-import java.util.ArrayList;
 
 public class ImageProcessor {
 
     private Image imageLoaded;
     private SimpleDoubleProperty brightnessThreshold = new SimpleDoubleProperty(50);
+    private int i = 0;
 
     public ImageProcessor(Image imageLoaded){
         this.imageLoaded = imageLoaded;
@@ -65,17 +63,15 @@ public class ImageProcessor {
 
         for(int i = 0; i < writableImage.getWidth(); i++){
             for (int j = 0; j < writableImage.getHeight(); j++){
-                pixelWriter.setColor(i, j, isColorOverThreshold(pixelReader.getColor(i,j)) ? Color.WHITE : Color.BLACK);
+                pixelWriter.setColor(i, j, isColorBelowThreshold(pixelReader.getColor(i,j)) ? Color.BLACK : Color.WHITE);
             }
         }
 
         return writableImage;
     }
 
-    public boolean isColorOverThreshold(Color color){
-//        System.out.println(((color.getBlue() + color.getGreen() + color.getRed())/3));
-//        System.out.println(brightnessThreshold.getValue()/100f);
-        return ((color.getBlue() + color.getGreen() + color.getRed())/3) > brightnessThreshold.getValue()/100f;
+    public boolean isColorBelowThreshold(Color color){
+        return ((color.getBlue() + color.getGreen() + color.getRed())/3) < brightnessThreshold.getValue()/100f; //True - bird; False - NOT bird
     }
 
     public void bindBrightnessSlider(DoubleProperty prop){

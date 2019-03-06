@@ -12,15 +12,11 @@ import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.sound.midi.Soundbank;
-import javax.swing.text.StyledEditorKit;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Controller {
     @FXML
@@ -86,7 +82,10 @@ public class Controller {
         findBirds();
 
         int setCount = 0;
-        for(int r : sets) if(r < 0) setCount++;
+        for(int r : sets) {
+            if(r < 0) setCount++;
+//            System.out.println(r);
+        }
 
         return setCount;
     }
@@ -95,18 +94,31 @@ public class Controller {
     private void findBirds(){
         for (int y = 0; y < imageLoaded.getHeight(); y++){
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
-                if (imgProc.isColorOverThreshold(pixelReader.getColor(x, y))) sets[x*y] = getSetIndex(x, y);
+                if (imgProc.isColorBelowThreshold(pixelReader.getColor(x, y))) sets[(y)*(int)imageLoaded.getWidth()+x] = getSetIndex(x, y);
 
             }
         }
     }
 
     private int getSetIndex(int x, int y) {
-        if(x > 0 && imgProc.isColorOverThreshold(pixelReader.getColor(x-1, y))) return (x)*(y+1); //Offset 0s ?
-        if(x > 0 && y > 0 && imgProc.isColorOverThreshold(pixelReader.getColor(x-1, y-1))) return x*y;
-        if(y > 0 && imgProc.isColorOverThreshold(pixelReader.getColor(x, y-1))) return (x+1)*y;
-        if(y > 0 && x < imageLoaded.getWidth()-1 && imgProc.isColorOverThreshold(pixelReader.getColor(x+1,y-1))) return (x+2)*(y); //offset width in relation to array
+        if(x > 0 && imgProc.isColorBelowThreshold(pixelReader.getColor(x-1, y))){
+//            System.out.println("Found black left");
+            return y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
+        }
+        if(x > 0 && y > 0 && imgProc.isColorBelowThreshold(pixelReader.getColor(x-1, y-1))){
+//            System.out.println("Found black left-top");
+            return (y-1)*(int)imageLoaded.getHeight() + x - 1;
+        }
+        if(y > 0 && imgProc.isColorBelowThreshold(pixelReader.getColor(x, y-1))){
+//            System.out.println("Found black top");
+            return (y-1)*(int)imageLoaded.getHeight() + x;
+        }
+        if(y > 0 && x < imageLoaded.getWidth()-1 && imgProc.isColorBelowThreshold(pixelReader.getColor(x+1,y-1))) {
+//            System.out.println("Found black top-left");
+            return (y-1)*(int)imageLoaded.getHeight() + x + 1; //offset width in relation to array
+        }
 
+//        System.out.println("Didn't find black");
         return --setIndex;
     }
 
@@ -163,6 +175,6 @@ public class Controller {
 
     public void test(ActionEvent actionEvent) {
         System.out.println(getNumberOfSets());
-        mainImageView.setImage(imgProc.drawBounds(sets));
+//        mainImageView.setImage(imgProc.drawBounds(sets));
     }
 }
