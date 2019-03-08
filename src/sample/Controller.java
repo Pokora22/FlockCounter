@@ -39,7 +39,6 @@ public class Controller {
         this.mainStage = mainStage;
     }
 
-    private Image imageLoaded;
     private File selectedFile;
     private ImageProcessor imgProc;
     private int setIndex;
@@ -61,15 +60,11 @@ public class Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            imageLoaded = new Image(selectedFile.toURI().toString());
+            imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
         }
 
         resetMenuTicks();
-        imgProc = new ImageProcessor(imageLoaded);
-        sets = new int[(int)imageLoaded.getHeight()*(int)imageLoaded.getWidth()];
-        setIndex = 0; //?
-        mainImageView.setImage(imageLoaded);
-        pixelReader = imageLoaded.getPixelReader();
+        mainImageView.setImage(imgProc.getImage());
     }
 
     @FXML
@@ -78,49 +73,12 @@ public class Controller {
     }
 
     //////////////////////////////////////////////// Sets stuff
-    private int getNumberOfSets(){ //TODO: foreach in sets where int < 0, count++; return count
-        findBirds();
-
-        int setCount = 0;
-        for(int r : sets) {
-            if(r < 0) setCount++;
-//            System.out.println(r);
-        }
-
-        return setCount;
-    }
 
 
-    private void findBirds(){
-        for (int y = 0; y < imageLoaded.getHeight(); y++){
-            for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
-                if (imgProc.isColorBelowThreshold(pixelReader.getColor(x, y))) sets[(y)*(int)imageLoaded.getWidth()+x] = getSetIndex(x, y);
 
-            }
-        }
-    }
 
-    private int getSetIndex(int x, int y) {
-        if(x > 0 && imgProc.isColorBelowThreshold(pixelReader.getColor(x-1, y))){
-//            System.out.println("Found black left");
-            return y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
-        }
-        if(x > 0 && y > 0 && imgProc.isColorBelowThreshold(pixelReader.getColor(x-1, y-1))){
-//            System.out.println("Found black left-top");
-            return (y-1)*(int)imageLoaded.getHeight() + x - 1;
-        }
-        if(y > 0 && imgProc.isColorBelowThreshold(pixelReader.getColor(x, y-1))){
-//            System.out.println("Found black top");
-            return (y-1)*(int)imageLoaded.getHeight() + x;
-        }
-        if(y > 0 && x < imageLoaded.getWidth()-1 && imgProc.isColorBelowThreshold(pixelReader.getColor(x+1,y-1))) {
-//            System.out.println("Found black top-left");
-            return (y-1)*(int)imageLoaded.getHeight() + x + 1; //offset width in relation to array
-        }
 
-//        System.out.println("Didn't find black");
-        return --setIndex;
-    }
+
 
     private int clamp(int integer, int min, int max){
         max--; //Quick and dirty fix
