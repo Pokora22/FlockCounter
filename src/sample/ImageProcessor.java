@@ -97,34 +97,25 @@ public class ImageProcessor {
 
     private int getPixelRoot(int x, int y) {
         int root = y * (int)imageLoaded.getWidth() + x;
-        if(root < 0) System.out.println("root = " + root);
+        if(root <= 0) System.out.println("root = " + root);
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
             root = y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
-            if(root < 0) System.out.println("root = " + root);
-            System.out.println(sutil.getRoot(root));
+            if(root <= 0) System.out.println("root = " + root);
+//            System.out.println(sutil.getRoot(root));
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x - 1;
-            if (root != checking) sutil.join(checking, root);
-            else root = checking;
-
-            if(root < 0) System.out.println("root = " + root);
-            if(checking < 0) System.out.println("checking = " + checking);
+            if(root <= 0) System.out.println("root = " + root);
+            if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x;
-            if (root != checking) sutil.join(checking, root);
-            else root = checking;
-
-            if(root < 0) System.out.println("root = " + root);
+//            if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
             int checking = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
-            if (root != checking) sutil.join(checking, root);
-            else root = checking;
-
-            if(root < 0) System.out.println("root = " + root);
+//            if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
         }
 
         return root;

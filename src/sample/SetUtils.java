@@ -30,9 +30,9 @@ public class SetUtils {
     }
 
     public int getRoot(int position){
-//        if(position<0) {
-//            System.out.println(imgProc.getPixelXY(position));
-//        }
+        if(pixels[position]<0) {
+            System.out.println(imgProc.getPixelXY(position)[0] + ", " + imgProc.getPixelXY(position)[1]);
+        }
         return pixels[position] == position? position : getRoot(pixels[position]);
     }
 
