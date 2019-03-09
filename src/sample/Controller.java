@@ -114,6 +114,6 @@ public class Controller {
 
     public void test(ActionEvent actionEvent) {
         System.out.println(imgProc.findBirds());
-//        mainImageView.setImage(imgProc.drawBounds(sets));
+        mainImageView.setImage(imgProc.drawBounds(sets));
     }
 }

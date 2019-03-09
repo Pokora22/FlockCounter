@@ -8,8 +8,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-import java.io.*;
-
 public class ImageProcessor {
 
     private Image imageLoaded;
@@ -29,26 +27,30 @@ public class ImageProcessor {
         int maxX = 0;
         int minY = (int)imageLoaded.getHeight();
         int maxY = 0;
-        WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
+        WritableImage writableImage = new WritableImage(getBnWImage().getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
+//
+//
+//        //TODO: Enclose it in same set relations somehow...
+//        for (int pixel: sets) {
+//            minX = getPixelXY(pixel)[0] < minX ? getPixelXY(pixel)[0] : minX;
+//            maxX = getPixelXY(pixel)[0] > maxX ? getPixelXY(pixel)[0] : maxX;
+//
+//            minY = getPixelXY(pixel)[1] < minY ? getPixelXY(pixel)[1] : minY;
+//            maxY = getPixelXY(pixel)[1] > maxY ? getPixelXY(pixel)[1] : maxY;
+//        }
+//
+//        for(int x = minX; x < maxX; x++) {
+//            pixelWriter.setColor(x, minY, Color.RED);
+//            pixelWriter.setColor(x, maxY, Color.RED);
+//        }
+//        for(int y = minY; y < maxY; y++){
+//            pixelWriter.setColor(y, minX, Color.RED);
+//            pixelWriter.setColor(y, maxX, Color.RED);
+//        }
 
-
-        //TODO: Enclose it in same set relations somehow...
-        for (int pixel: sets) {
-            minX = getPixelXY(pixel)[0] < minX ? getPixelXY(pixel)[0] : minX;
-            maxX = getPixelXY(pixel)[0] > maxX ? getPixelXY(pixel)[0] : maxX;
-
-            minY = getPixelXY(pixel)[1] < minY ? getPixelXY(pixel)[1] : minY;
-            maxY = getPixelXY(pixel)[1] > maxY ? getPixelXY(pixel)[1] : maxY;
-        }
-
-        for(int x = minX; x < maxX; x++) {
-            pixelWriter.setColor(x, minY, Color.RED);
-            pixelWriter.setColor(x, maxY, Color.RED);
-        }
-        for(int y = minY; y < maxY; y++){
-            pixelWriter.setColor(y, minX, Color.RED);
-            pixelWriter.setColor(y, maxX, Color.RED);
+        for(int root : sutil.getRoots()){
+            pixelWriter.setColor(getPixelXY(root)[0], getPixelXY(root)[1], Color.RED);
         }
 
         return writableImage;
@@ -88,24 +90,41 @@ public class ImageProcessor {
             }
         }
 
-        return sutil.getNumberOfSets();
+//        for(int p : sutil.getSets()) if (p >= 0) System.out.println(sutil.getRoot(p)); //Works for every non-negative pixel!
+
+        return sutil.getRoots().size();
     }
 
     private int getPixelRoot(int x, int y) {
         int root = y * (int)imageLoaded.getWidth() + x;
+        if(root < 0) System.out.println("root = " + root);
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
             root = y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
+            if(root < 0) System.out.println("root = " + root);
+            System.out.println(sutil.getRoot(root));
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
-            root = (y-1)*(int)imageLoaded.getWidth() + x - 1;
+            int checking = (y-1)*(int)imageLoaded.getWidth() + x - 1;
+            if (root != checking) sutil.join(checking, root);
+            else root = checking;
+
+            if(root < 0) System.out.println("root = " + root);
+            if(checking < 0) System.out.println("checking = " + checking);
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
-            root = (y-1)*(int)imageLoaded.getWidth() + x;
+            int checking = (y-1)*(int)imageLoaded.getWidth() + x;
+            if (root != checking) sutil.join(checking, root);
+            else root = checking;
+
+            if(root < 0) System.out.println("root = " + root);
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
-            root = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
+            int checking = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
+            if (root != checking) sutil.join(checking, root);
+            else root = checking;
 
+            if(root < 0) System.out.println("root = " + root);
         }
 
         return root;
