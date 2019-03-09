@@ -5,9 +5,11 @@ import java.util.Arrays;
 
 public class SetUtils {
     private int[] pixels;
+    private ImageProcessor imgProc;
 
-    public SetUtils(int arrSize){
+    public SetUtils(int arrSize, ImageProcessor imgProc){
         pixels = new int[arrSize];
+        this.imgProc = imgProc;
     }
 
     public int[] getSortedSets(){

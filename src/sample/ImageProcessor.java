@@ -8,18 +8,20 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import java.io.*;
+
 public class ImageProcessor {
 
     private Image imageLoaded;
     private PixelReader pReader;
     private SimpleDoubleProperty brightnessThreshold = new SimpleDoubleProperty(50);
     private SetUtils sutil;
-    private int i = 0;
+
 
     public ImageProcessor(Image imageLoaded){
         this.imageLoaded = imageLoaded;
         pReader = imageLoaded.getPixelReader();
-        sutil = new SetUtils((int)imageLoaded.getHeight() * (int)imageLoaded.getWidth());
+        sutil = new SetUtils((int)imageLoaded.getHeight() * (int)imageLoaded.getWidth(), this);
     }
 
     public Image drawBounds(int[] sets){
@@ -52,7 +54,7 @@ public class ImageProcessor {
         return writableImage;
     }
 
-    private int[] getPixelXY(int pixel){ //Where to put it ?
+    public int[] getPixelXY(int pixel){ //Where to put it ?
         int[] xy = new int[2];
         xy[0] = pixel % (int)imageLoaded.getHeight();
         xy[1] = (int)(pixel / imageLoaded.getWidth());
@@ -81,7 +83,7 @@ public class ImageProcessor {
     public int findBirds(){
         for (int y = 0; y < imageLoaded.getHeight(); y++){
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
-                if (isColorBelowThreshold(pReader.getColor(x, y))) sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getSetRoot(x, y);
+                if (isColorBelowThreshold(pReader.getColor(x, y))) sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getPixelRoot(x, y);
                 else sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
         }
@@ -89,27 +91,22 @@ public class ImageProcessor {
         return sutil.getNumberOfSets();
     }
 
-    private int getSetRoot(int x, int y) {
+    private int getPixelRoot(int x, int y) {
         int root = y * (int)imageLoaded.getWidth() + x;
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
-            root = sutil.getRoot(y * (int)imageLoaded.getWidth() + x - 1); //Offset 0s ?
-//            System.out.println("Found black left: x = " + (x-1) + " y = " + y + " with root value of " + root);
+            root = y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
-//            System.out.println("Found black left-top");
-            root = sutil.getRoot((y-1)*(int)imageLoaded.getHeight() + x - 1);
+            root = (y-1)*(int)imageLoaded.getWidth() + x - 1;
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
-//            System.out.println("Found black top");
-            root = sutil.getRoot((y-1)*(int)imageLoaded.getHeight() + x);
+            root = (y-1)*(int)imageLoaded.getWidth() + x;
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
-//            System.out.println("Found black top-left");
-            root = sutil.getRoot((y-1)*(int)imageLoaded.getHeight() + x + 1); //offset width in relation to array
-        }
-//        System.out.println("Didn't find black");
+            root = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
 
+        }
 
         return root;
     }
