@@ -54,15 +54,8 @@ public class Controller {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.gif", "*.bmp"));
 
         selectedFile = fileChooser.showOpenDialog(mainStage);
-        if (selectedFile != null) {
-            try {
-                System.out.println(selectedFile.getCanonicalPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
-        }
-
+        if (selectedFile == null) return;
+        imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
         resetMenuTicks();
         mainImageView.setImage(imgProc.getImage());
     }

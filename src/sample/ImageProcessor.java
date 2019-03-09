@@ -52,9 +52,10 @@ public class ImageProcessor {
         return writableImage;
     }
 
-    private int[] getPixelXY(int pixel){
+    private int[] getPixelXY(int pixel){ //Where to put it ?
         int[] xy = new int[2];
-
+        xy[0] = pixel % (int)imageLoaded.getHeight();
+        xy[1] = (int)(pixel / imageLoaded.getWidth());
         return xy;
     }
 
@@ -81,7 +82,7 @@ public class ImageProcessor {
         for (int y = 0; y < imageLoaded.getHeight(); y++){
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
                 if (isColorBelowThreshold(pReader.getColor(x, y))) sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getSetRoot(x, y);
-
+                else sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
         }
 
@@ -97,15 +98,15 @@ public class ImageProcessor {
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
 //            System.out.println("Found black left-top");
-            root = (y-1)*(int)imageLoaded.getHeight() + x - 1;
+            root = sutil.getRoot((y-1)*(int)imageLoaded.getHeight() + x - 1);
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
 //            System.out.println("Found black top");
-            root = (y-1)*(int)imageLoaded.getHeight() + x;
+            root = sutil.getRoot((y-1)*(int)imageLoaded.getHeight() + x);
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
 //            System.out.println("Found black top-left");
-            root = (y-1)*(int)imageLoaded.getHeight() + x + 1; //offset width in relation to array
+            root = sutil.getRoot((y-1)*(int)imageLoaded.getHeight() + x + 1); //offset width in relation to array
         }
 //        System.out.println("Didn't find black");
 

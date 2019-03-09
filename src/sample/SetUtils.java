@@ -22,45 +22,28 @@ public class SetUtils {
         System.out.println(unsorted);
         System.out.println(sorted);
 
-        return sets; //2D? 1D probably enough
+        return sets;
     }
 
     public int getRoot(int position){
-        return pixels[position] == position? position : getRoot(pixels[position]); //??
+        return pixels[position] == position? position : getRoot(pixels[position]);
     }
 
     public void add(int location, int value){
         pixels[location] = value;
     }
 
-    public int getNumberOfSets(){ //TODO: foreach in sets where int < 0, count++; return count
-        /////CONTAINS WAY - write own sort and do it other way later? Probably better performance
+    public int getNumberOfSets(){
         ArrayList<Integer> roots = new ArrayList<>();
 
         for(int p : pixels){
-            int root = getRoot(p);
-            if(!roots.contains(root)) roots.add(root);
+            if(p >= 0) {
+                int root = getRoot(p);
+                if (!roots.contains(root)) roots.add(root);
+            }
         }
 
-//        int[] sortedPixels = getSortedSets();
-//        int setCount = 0;
-//        int compare = sortedPixels[0];
-//
-//        for(int p : sortedPixels) {
-//            if(p != compare) {
-//                compare = p;
-//                setCount++;
-//            }
-//        }
-//        return setCount;
-
-        System.out.println(roots);
-
         return roots.size();
-    }
-
-    public void addPixel(int position, int value){
-
     }
 
     public int[] getSets() {
