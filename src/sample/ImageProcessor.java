@@ -77,35 +77,40 @@ public class ImageProcessor {
         return ((color.getBlue() + color.getGreen() + color.getRed())/3) < brightnessThreshold.getValue()/100f; //True - bird; False - NOT bird
     }
 
-    private void findBirds(){
+    public int findBirds(){
         for (int y = 0; y < imageLoaded.getHeight(); y++){
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
-                if (isColorBelowThreshold(pReader.getColor(x, y))) sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getSetIndex(x, y);
+                if (isColorBelowThreshold(pReader.getColor(x, y))) sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getSetRoot(x, y);
 
             }
         }
+
+        return sutil.getNumberOfSets();
     }
 
-    private int getSetIndex(int x, int y) {
+    private int getSetRoot(int x, int y) {
+        int root = y * (int)imageLoaded.getWidth() + x;
+
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
-//            System.out.println("Found black left");
-            return y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
+            root = sutil.getRoot(y * (int)imageLoaded.getWidth() + x - 1); //Offset 0s ?
+//            System.out.println("Found black left: x = " + (x-1) + " y = " + y + " with root value of " + root);
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
 //            System.out.println("Found black left-top");
-            return (y-1)*(int)imageLoaded.getHeight() + x - 1;
+            root = (y-1)*(int)imageLoaded.getHeight() + x - 1;
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
 //            System.out.println("Found black top");
-            return (y-1)*(int)imageLoaded.getHeight() + x;
+            root = (y-1)*(int)imageLoaded.getHeight() + x;
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
 //            System.out.println("Found black top-left");
-            return (y-1)*(int)imageLoaded.getHeight() + x + 1; //offset width in relation to array
+            root = (y-1)*(int)imageLoaded.getHeight() + x + 1; //offset width in relation to array
         }
-
 //        System.out.println("Didn't find black");
-        return y * (int)imageLoaded.getWidth() + x;
+
+
+        return root;
     }
 
     public void bindBrightnessSlider(DoubleProperty prop){

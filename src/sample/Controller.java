@@ -72,18 +72,6 @@ public class Controller {
 
     }
 
-    //////////////////////////////////////////////// Sets stuff
-
-
-
-
-
-
-
-    private int clamp(int integer, int min, int max){
-        max--; //Quick and dirty fix
-        return integer < min ? 0 : integer > max ? max : integer;
-    }
 
     public void setImageResizable() {
         mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
@@ -92,7 +80,7 @@ public class Controller {
 
     @FXML
     private void revertImgToOriginal(ActionEvent actionEvent) {
-        mainImageView.setImage(imageLoaded);
+        mainImageView.setImage(imgProc.getImage());
         resetMenuTicks();
     }
 
@@ -101,7 +89,7 @@ public class Controller {
     }
 
     public void setModifiedImage(ActionEvent actionEvent) {
-        Image imageToShow = bnwMenuItem.isSelected() ? imgProc.getBnWImage() : imageLoaded;
+        Image imageToShow = bnwMenuItem.isSelected() ? imgProc.getBnWImage() : imgProc.getImage();
         if(imageToShow != null) mainImageView.setImage(imageToShow);
     }
 
@@ -132,7 +120,7 @@ public class Controller {
     }
 
     public void test(ActionEvent actionEvent) {
-        System.out.println(getNumberOfSets());
+        System.out.println(imgProc.findBirds());
 //        mainImageView.setImage(imgProc.drawBounds(sets));
     }
 }

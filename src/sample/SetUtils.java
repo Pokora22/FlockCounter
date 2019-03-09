@@ -1,5 +1,6 @@
 package sample;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SetUtils {
@@ -11,7 +12,16 @@ public class SetUtils {
 
     public int[] getSortedSets(){
         int[] sets = pixels.clone();
-        Arrays.sort(pixels); //negative values?
+        String unsorted = "Unsorted array: ";
+        String sorted = "Sorted array: ";
+
+        for(int p : sets) unsorted += p + ", ";
+        Arrays.sort(sets); //negative values?
+        for(int p : sets) sorted += p + ", ";
+
+        System.out.println(unsorted);
+        System.out.println(sorted);
+
         return sets; //2D? 1D probably enough
     }
 
@@ -24,17 +34,29 @@ public class SetUtils {
     }
 
     public int getNumberOfSets(){ //TODO: foreach in sets where int < 0, count++; return count
-        int setCount = 0;
-        int compare = pixels[0];
+        /////CONTAINS WAY - write own sort and do it other way later? Probably better performance
+        ArrayList<Integer> roots = new ArrayList<>();
 
-        for(int p : pixels) {
-            if(p != compare) {
-                compare = p;
-                setCount++;
-            }
+        for(int p : pixels){
+            int root = getRoot(p);
+            if(!roots.contains(root)) roots.add(root);
         }
 
-        return setCount;
+//        int[] sortedPixels = getSortedSets();
+//        int setCount = 0;
+//        int compare = sortedPixels[0];
+//
+//        for(int p : sortedPixels) {
+//            if(p != compare) {
+//                compare = p;
+//                setCount++;
+//            }
+//        }
+//        return setCount;
+
+        System.out.println(roots);
+
+        return roots.size();
     }
 
     public void addPixel(int position, int value){

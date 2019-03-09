@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="JFX11" level="project" />
     <orderEntry type="library" name="org.openjdk.jmh:jmh-core:1.21" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
