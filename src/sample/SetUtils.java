@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SetUtils {
-    private int[] pixels;
-    private ImageProcessor imgProc;
+//    private int[] pixels;
+//    private ImageProcessor imgProc;
 
     public SetUtils(int arrSize, ImageProcessor imgProc){
-        pixels = new int[arrSize];
-        this.imgProc = imgProc;
+//        pixels = new int[arrSize];
+//        this.imgProc = imgProc;
     }
 
-    public int[] getSortedSets(){
-        int[] sets = pixels.clone();
+    public SetUtils(){}
+
+    public int[] getSortedSets(int[] arr){
+        int[] sets = arr.clone();
         String unsorted = "Unsorted array: ";
         String sorted = "Sorted array: ";
 
@@ -27,16 +29,16 @@ public class SetUtils {
         return sets;
     }
 
-    public int findRoot(int position){
-        return pixels[position] == position? position : findRoot(pixels[position]);
+    public int findRoot(int position, int[] arr){
+        return arr[position] == position? position : findRoot(arr[position], arr);
     }
 
-    public ArrayList<Integer> getRoots(){
+    public ArrayList<Integer> getRoots(int[] arr){
         ArrayList<Integer> roots = new ArrayList<>();
 
-        for(int p : pixels){
-            if(p >= 0) {
-                int root = findRoot(p);
+        for(int i : arr){
+            if(i >= 0) {
+                int root = findRoot(i, arr);
                 if (!roots.contains(root)) roots.add(root);
             }
         }
@@ -44,11 +46,7 @@ public class SetUtils {
         return roots;
     }
 
-    public int[] getSets() {
-        return pixels;
-    }
-
-    public void join(int childPosition, int parentPosition) {
-        pixels[findRoot(childPosition)] = findRoot(parentPosition);
+    public void join(int childPosition, int parentPosition, int[] arr) {
+        arr[findRoot(childPosition, arr)] = findRoot(parentPosition, arr);
     }
 }

@@ -14,12 +14,14 @@ public class ImageProcessor {
     private PixelReader pReader;
     private SimpleDoubleProperty brightnessThreshold = new SimpleDoubleProperty(50);
     private SetUtils sutil;
+    private int[] pixels;
 
 
     public ImageProcessor(Image imageLoaded){
         this.imageLoaded = imageLoaded;
         pReader = imageLoaded.getPixelReader();
-        sutil = new SetUtils((int)imageLoaded.getHeight() * (int)imageLoaded.getWidth(), this);
+        sutil = new SetUtils();
+        pixels = new int[(int)imageLoaded.getHeight() * (int)imageLoaded.getWidth()];
     }
 
     public Image drawBounds(int[] sets){
@@ -30,7 +32,7 @@ public class ImageProcessor {
         WritableImage writableImage = new WritableImage(getBnWImage().getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        for(int root : sutil.getRoots()){
+        for(int root : sutil.getRoots(pixels)){
             pixelWriter.setColor(getPixelXY(root)[0], getPixelXY(root)[1], Color.RED);
         }
 
@@ -67,35 +69,36 @@ public class ImageProcessor {
         for (int y = 0; y < imageLoaded.getHeight(); y++){
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
                 if (isColorBelowThreshold(pReader.getColor(x, y))){
-                    sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getPixelRoot(x, y);
+                    int pos = y * (int)imageLoaded.getWidth() + x;
+                    pixels[pos] = pos; //Set to itself first?
+                    pixels[pos] = checkNeighbourPixels(x, y, pos);
                 }
-                else sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = -1;
+                else pixels[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
         }
 
-        return sutil.getRoots().size();
+        return sutil.getRoots(pixels).size();
     }
 
-    private int getPixelRoot(int x, int y) {
-        int root = y * (int)imageLoaded.getWidth() + x;
+    private int checkNeighbourPixels(int x, int y, int root) { //FIXME: Doing this out of order. Root of this pixel(x,y) is not yet set (it's 0) so it will point to wrong space. And if position 0 is white (-1) it will oob. Need to set root first, then check for neighbours!
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
-            root = sutil.findRoot(y * (int)imageLoaded.getWidth() + x - 1); //Offset 0s ?
+            root = sutil.findRoot(y * (int)imageLoaded.getWidth() + x - 1, pixels); //Offset 0s ?
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x - 1;
-            if (sutil.findRoot(root) != sutil.findRoot(checking)) sutil.join(root, checking);
-            root = sutil.findRoot(checking);
+            if (sutil.findRoot(root, pixels) != sutil.findRoot(checking, pixels)) sutil.join(root, checking, pixels);
+            root = sutil.findRoot(checking, pixels);
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x;
-            if (sutil.findRoot(root) != sutil.findRoot(checking)) sutil.join(root, checking); //FIXME: Doing this out of order. Root of this pixel(x,y) is not yet set (it's 0) so it will point to wrong space. And if position 0 is white (-1) it will oob. Need to set root first, then check for neighbours!
-            root = sutil.findRoot(checking);
+            if (sutil.findRoot(root, pixels) != sutil.findRoot(checking, pixels)) sutil.join(root, checking, pixels);
+            root = sutil.findRoot(checking, pixels);
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
             int checking = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
-            if (sutil.findRoot(root) != sutil.findRoot(checking)) sutil.join(root, checking);
-            root = sutil.findRoot(checking);
+            if (sutil.findRoot(root, pixels) != sutil.findRoot(checking, pixels)) sutil.join(root, checking, pixels);
+            root = sutil.findRoot(checking, pixels);
         }
 
         return root;
