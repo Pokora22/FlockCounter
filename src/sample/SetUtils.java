@@ -30,8 +30,8 @@ public class SetUtils {
     }
 
     public int getRoot(int position){
-        if(pixels[position]<0) {
-            System.out.println(imgProc.getPixelXY(position)[0] + ", " + imgProc.getPixelXY(position)[1]);
+        if(pixels[position]<=0) {
+//            System.out.println(imgProc.getPixelXY(position)[0] + ", " + imgProc.getPixelXY(position)[1]);
         }
         return pixels[position] == position? position : getRoot(pixels[position]);
     }
@@ -54,6 +54,7 @@ public class SetUtils {
     }
 
     public void join(int childPosition, int parentPosition) {
-        pixels[childPosition] = parentPosition;
+        pixels[childPosition] = parentPosition; //FIXME:
+        // root of pixels[childPosition] maybe? root = position, so pixels[getRoot(childPosition)] = parentPosition?
     }
 }

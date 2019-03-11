@@ -39,8 +39,8 @@ public class ImageProcessor {
 
     public int[] getPixelXY(int pixel){ //Where to put it ?
         int[] xy = new int[2];
-        xy[0] = pixel % (int)imageLoaded.getHeight();
-        xy[1] = (int)(pixel / imageLoaded.getWidth());
+        xy[0] = pixel % (int)imageLoaded.getWidth();
+        xy[1] = (pixel - xy[0])/ (int) imageLoaded.getWidth();
         return xy;
     }
 
@@ -68,7 +68,7 @@ public class ImageProcessor {
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
                 if (isColorBelowThreshold(pReader.getColor(x, y))){
                     sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getPixelRoot(x, y);
-                    System.out.println("Adding pixel " + x + ", " + y + " at root with root " + sutil.getRoot(getPixelRoot(x, y)));
+//                    System.out.println("Adding pixel " + x + ", " + y + " at root with root " + sutil.getRoot(getPixelRoot(x, y)) + " with position: " + getPixelXY(sutil.getRoot(getPixelRoot(x, y)))[0] + ", " + getPixelXY(sutil.getRoot(getPixelRoot(x, y)))[1]);
                 }
                 else sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
@@ -83,7 +83,7 @@ public class ImageProcessor {
         int root = y * (int)imageLoaded.getWidth() + x;
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
-            root = y * (int)imageLoaded.getWidth() + x - 1; //Offset 0s ?
+            root = sutil.getRoot(y * (int)imageLoaded.getWidth() + x - 1); //Offset 0s ?
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x - 1;
@@ -97,6 +97,8 @@ public class ImageProcessor {
             int checking = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
             if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
         }
+
+//        System.out.println(root);
 
         return root;
     }
