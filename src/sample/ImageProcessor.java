@@ -2,17 +2,21 @@ package sample;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import java.util.HashSet;
+
 public class ImageProcessor {
 
     private Image imageLoaded;
     private PixelReader pReader;
     private SimpleDoubleProperty brightnessThreshold = new SimpleDoubleProperty(50);
+    private SimpleIntegerProperty noiseFactor = new SimpleIntegerProperty(0);
     private SetUtils sutil;
     private int[] pixels;
 
@@ -24,22 +28,43 @@ public class ImageProcessor {
         pixels = new int[(int)imageLoaded.getHeight() * (int)imageLoaded.getWidth()];
     }
 
-    public Image drawBounds(int[] sets){
-        int minX = (int)imageLoaded.getWidth();
-        int maxX = 0;
-        int minY = (int)imageLoaded.getHeight();
-        int maxY = 0;
+    public Image drawBounds(){
         WritableImage writableImage = new WritableImage(getBnWImage().getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         for(int root : sutil.getRoots(pixels)){
-            pixelWriter.setColor(getPixelXY(root)[0], getPixelXY(root)[1], Color.RED);
+            int minX = (int)imageLoaded.getWidth();
+            int maxX = 0;
+            int minY = (int)imageLoaded.getHeight();
+            int maxY = 0;
+            int pixelCount = 0;
+
+            for (int i = 0; i < pixels.length; i++) {
+                if(pixels[i] >= 0 && sutil.findRoot(pixels[i], pixels) == root){
+                    pixelCount++;
+                    if(getPixelXY(i)[0] < minX) minX = getPixelXY(i)[0];
+                    if(getPixelXY(i)[0] > maxX) maxX = getPixelXY(i)[0];
+                    if(getPixelXY(i)[1] < minY) minY = getPixelXY(i)[1];
+                    if(getPixelXY(i)[1] > maxY) maxY = getPixelXY(i)[1];
+                }
+            }
+
+            if(pixelCount <= noiseFactor.get()) break;
+
+            for (int x = minX; x < maxX; x++) {
+                pixelWriter.setColor(x, minY, Color.RED);
+                pixelWriter.setColor(x, maxY, Color.RED);
+            }
+            for (int y = minY; y < maxY; y++) {
+                pixelWriter.setColor(minX, y, Color.RED);
+                pixelWriter.setColor(maxX, y, Color.RED);
+            }
         }
 
         return writableImage;
     }
 
-    public int[] getPixelXY(int pixel){ //Where to put it ?
+    public int[] getPixelXY(int pixel){
         int[] xy = new int[2];
         xy[0] = pixel % (int)imageLoaded.getWidth();
         xy[1] = (pixel - xy[0])/ (int) imageLoaded.getWidth();
@@ -67,7 +92,7 @@ public class ImageProcessor {
 
     public int findBirds(){
         for (int y = 0; y < imageLoaded.getHeight(); y++){
-            for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
+            for (int x = 0; x < imageLoaded.getWidth(); x++){
                 if (isColorBelowThreshold(pReader.getColor(x, y))){
                     int pos = y * (int)imageLoaded.getWidth() + x;
                     pixels[pos] = pos; //Set to itself first?
@@ -106,6 +131,10 @@ public class ImageProcessor {
 
     public void bindBrightnessSlider(DoubleProperty prop){
         brightnessThreshold.bind(prop);
+    }
+
+    public void bindNoiseSlider(DoubleProperty prop){
+        noiseFactor.bind(prop);
     }
 
     public Image getImage() {

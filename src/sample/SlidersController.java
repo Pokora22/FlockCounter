@@ -1,17 +1,14 @@
 package sample;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.TextAlignment;
 
 public class SlidersController {
     @FXML
-    private Slider brightnessThresholdSlider, greenSlider, blueSlider;
+    private Slider brightnessThresholdSlider, noiseSlider, blueSlider;
     @FXML
     private Label brightnessThresholdLabel, greenValueLabel, blueValueLabel;
 
@@ -35,7 +32,7 @@ public class SlidersController {
             if(!isChanging) sourceController.setModifiedImage(new ActionEvent());
         });
 
-        greenSlider.valueProperty().addListener((e-> greenValueLabel.setText(String.valueOf(greenSlider.valueProperty().intValue()))));
+        noiseSlider.valueProperty().addListener((e-> greenValueLabel.setText(String.valueOf(noiseSlider.valueProperty().intValue()))));
 
         blueSlider.valueProperty().addListener((e-> blueValueLabel.setText(String.valueOf(blueSlider.valueProperty().intValue()))));
     }
@@ -44,8 +41,8 @@ public class SlidersController {
         return brightnessThresholdSlider;
     }
 
-    public Slider getGreenSlider() {
-        return greenSlider;
+    public Slider getNoiseSlider() {
+        return noiseSlider;
     }
 
     public Slider getBlueSlider() {

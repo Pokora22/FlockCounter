@@ -41,9 +41,6 @@ public class Controller {
 
     private File selectedFile;
     private ImageProcessor imgProc;
-    private int setIndex;
-    private PixelReader pixelReader;
-    int[] sets;
 
     @FXML
     private void openImageFile(ActionEvent actionEvent) {
@@ -99,7 +96,7 @@ public class Controller {
         SlidersController controller = loader.getController();
 
         imgProc.bindBrightnessSlider(controller.getBrightnessThresholdSlider().valueProperty());
-        greenChannel.bind(controller.getGreenSlider().valueProperty());
+        imgProc.bindNoiseSlider(controller.getNoiseSlider().valueProperty());
         blueChannel.bind(controller.getBlueSlider().valueProperty());
 
         Stage sliderStage = new Stage();
@@ -114,6 +111,6 @@ public class Controller {
 
     public void test(ActionEvent actionEvent) {
         System.out.println(imgProc.findBirds());
-        mainImageView.setImage(imgProc.drawBounds(sets));
+        mainImageView.setImage(imgProc.drawBounds());
     }
 }
