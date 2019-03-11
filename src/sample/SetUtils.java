@@ -1,7 +1,5 @@
 package sample;
 
-import javafx.scene.chart.XYChart;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -29,11 +27,8 @@ public class SetUtils {
         return sets;
     }
 
-    public int getRoot(int position){
-        if(pixels[position]<=0) {
-//            System.out.println(imgProc.getPixelXY(position)[0] + ", " + imgProc.getPixelXY(position)[1]);
-        }
-        return pixels[position] == position? position : getRoot(pixels[position]);
+    public int findRoot(int position){
+        return pixels[position] == position? position : findRoot(pixels[position]);
     }
 
     public ArrayList<Integer> getRoots(){
@@ -41,7 +36,7 @@ public class SetUtils {
 
         for(int p : pixels){
             if(p >= 0) {
-                int root = getRoot(p);
+                int root = findRoot(p);
                 if (!roots.contains(root)) roots.add(root);
             }
         }
@@ -54,7 +49,6 @@ public class SetUtils {
     }
 
     public void join(int childPosition, int parentPosition) {
-        pixels[childPosition] = parentPosition; //FIXME:
-        // root of pixels[childPosition] maybe? root = position, so pixels[getRoot(childPosition)] = parentPosition?
+        pixels[findRoot(childPosition)] = findRoot(parentPosition);
     }
 }

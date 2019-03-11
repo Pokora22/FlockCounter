@@ -68,13 +68,10 @@ public class ImageProcessor {
             for (int x = 0; x < imageLoaded.getWidth(); x++){ //TODO: Would left, left-up, up suffice? Check for set - edge cases ?
                 if (isColorBelowThreshold(pReader.getColor(x, y))){
                     sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = getPixelRoot(x, y);
-//                    System.out.println("Adding pixel " + x + ", " + y + " at root with root " + sutil.getRoot(getPixelRoot(x, y)) + " with position: " + getPixelXY(sutil.getRoot(getPixelRoot(x, y)))[0] + ", " + getPixelXY(sutil.getRoot(getPixelRoot(x, y)))[1]);
                 }
                 else sutil.getSets()[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
         }
-
-//        for(int p : sutil.getSets()) if (p >= 0) System.out.println(sutil.getRoot(p)); //Works for every non-negative pixel!
 
         return sutil.getRoots().size();
     }
@@ -83,22 +80,23 @@ public class ImageProcessor {
         int root = y * (int)imageLoaded.getWidth() + x;
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
-            root = sutil.getRoot(y * (int)imageLoaded.getWidth() + x - 1); //Offset 0s ?
+            root = sutil.findRoot(y * (int)imageLoaded.getWidth() + x - 1); //Offset 0s ?
         }
         if(x > 0 && y > 0 && isColorBelowThreshold(pReader.getColor(x-1, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x - 1;
-            if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
+            if (sutil.findRoot(root) != sutil.findRoot(checking)) sutil.join(root, checking);
+            root = sutil.findRoot(checking);
         }
         if(y > 0 && isColorBelowThreshold(pReader.getColor(x, y-1))){
             int checking = (y-1)*(int)imageLoaded.getWidth() + x;
-            if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
+            if (sutil.findRoot(root) != sutil.findRoot(checking)) sutil.join(root, checking); //FIXME: Doing this out of order. Root of this pixel(x,y) is not yet set (it's 0) so it will point to wrong space. And if position 0 is white (-1) it will oob. Need to set root first, then check for neighbours!
+            root = sutil.findRoot(checking);
         }
         if(y > 0 && x < imageLoaded.getWidth()-1 && isColorBelowThreshold(pReader.getColor(x+1,y-1))) {
             int checking = (y-1)*(int)imageLoaded.getWidth() + x + 1; //offset width in relation to array
-            if (sutil.getRoot(root) != sutil.getRoot(checking)) sutil.join(checking, root);
+            if (sutil.findRoot(root) != sutil.findRoot(checking)) sutil.join(root, checking);
+            root = sutil.findRoot(checking);
         }
-
-//        System.out.println(root);
 
         return root;
     }
