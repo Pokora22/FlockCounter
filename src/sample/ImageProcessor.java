@@ -29,7 +29,7 @@ public class ImageProcessor {
     }
 
     public Image drawBounds(){
-        WritableImage writableImage = new WritableImage(getBnWImage().getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
+        WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         for(int root : sutil.getRoots(pixels)){
@@ -101,7 +101,8 @@ public class ImageProcessor {
                 else pixels[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
         }
-
+        sutil.getRoots(pixels);
+        sutil.removeSmallSets(noiseFactor.get(), pixels);
         return sutil.getRoots(pixels).size();
     }
 

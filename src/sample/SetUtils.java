@@ -4,13 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SetUtils {
-//    private int[] pixels;
-//    private ImageProcessor imgProc;
-
-    public SetUtils(int arrSize, ImageProcessor imgProc){
-//        pixels = new int[arrSize];
-//        this.imgProc = imgProc;
-    }
+    ArrayList<Integer> roots;
 
     public SetUtils(){}
 
@@ -34,8 +28,7 @@ public class SetUtils {
     }
 
     public ArrayList<Integer> getRoots(int[] arr){
-        ArrayList<Integer> roots = new ArrayList<>();
-
+        roots = new ArrayList<>();
         for(int i : arr){
             if(i >= 0) {
                 int root = findRoot(i, arr);
@@ -44,6 +37,16 @@ public class SetUtils {
         }
 
         return roots;
+    }
+
+    public void removeSmallSets(int sizeLimit, int[] arr){ //TODO: This can throw null pointer. Overall better way needed.
+        for(int r : roots){
+            int elemCount = 0;
+            for(int e : arr){
+                if(e >= 0 && findRoot(e, arr) == r) elemCount++;
+            }
+            if(elemCount <= sizeLimit) roots.remove(r);
+        }
     }
 
     public void join(int childPosition, int parentPosition, int[] arr) {
