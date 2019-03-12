@@ -20,15 +20,9 @@ import java.io.IOException;
 
 public class Controller {
     @FXML
-    private CheckMenuItem bnwMenuItem;
-    @FXML
     private ScrollPane imageScrollPane;
     @FXML
-    private FlowPane imagePane;
-    @FXML
     private ImageView mainImageView;
-    @FXML
-    private BorderPane mainBorderPane;
 
     private Stage mainStage;
     private File selectedFile;
@@ -43,14 +37,13 @@ public class Controller {
         selectedFile = fileChooser.showOpenDialog(mainStage);
         if (selectedFile == null) return;
         imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
-        resetMenuTicks();
         mainImageView.setImage(imgProc.getImage());
         viewSliders(actionEvent);
     }
 
     @FXML
     private void closeApp(ActionEvent actionEvent) {
-
+        System.exit(0);
     }
 
     public void setImageResizable() {
@@ -62,22 +55,11 @@ public class Controller {
     private void revertImgToOriginal(ActionEvent actionEvent) {
         if(imgProc == null) return;
         mainImageView.setImage(imgProc.getImage());
-        resetMenuTicks();
-    }
-
-    private void resetMenuTicks() {
-        bnwMenuItem.setSelected(false);
-    }
-
-    public void setModifiedImage(ActionEvent actionEvent) {
-        if(imgProc == null) return;
-        Image imageToShow = bnwMenuItem.isSelected() ? imgProc.getBnWImage() : imgProc.getImage();
-        if(imageToShow != null) mainImageView.setImage(imageToShow);
     }
 
     @FXML
     private void viewSliders(ActionEvent actionEvent) {
-        if(imgProc == null) return; //TODO: Popup warning no image loaded?
+        if(imgProc == null) return;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sliders.fxml"));
         Parent root;
         try {
@@ -92,18 +74,18 @@ public class Controller {
         imgProc.bindNoiseSlider(slidersController.getNoiseSlider().valueProperty());
 
         Stage sliderStage = new Stage();
-        sliderStage.setTitle("Sliders?");
+        sliderStage.setTitle("Process Preview");
         sliderStage.setX(mainStage.getX()+mainStage.getWidth());
         sliderStage.setY(mainStage.getY());
-        sliderStage.setScene(new Scene(root, 300, 75));
+        sliderStage.setScene(new Scene(root, 300, 275));
         slidersController.addSliderListeners();
         slidersController.initSliderValues(50, 0);
-        slidersController.setSourceController(this);
         slidersController.setPreviewImage(imgProc);
+        slidersController.setImageResizable();
         sliderStage.show();
     }
 
-    public void test(ActionEvent actionEvent) {
+    public void countBirds(ActionEvent actionEvent) {
         if(imgProc == null) return;
         System.out.println("Birds found: " + imgProc.findBirds());
         mainImageView.setImage(imgProc.drawBounds());

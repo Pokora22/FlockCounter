@@ -37,7 +37,7 @@ public class SetUtils {
         return roots;
     }
 
-    public ArrayList<Integer> getSizeFilteredRoots(int sizeLimit, int[] arr){ //TODO: This can throw null pointer. Concurrent modification. Cannot iterate through and remove at same time.
+    public ArrayList<Integer> getSizeFilteredRoots(int sizeLimit, int[] arr){
         ArrayList<Integer> roots = getRoots(arr);
         int index = 0;
         while(index < roots.size()){
@@ -51,14 +51,6 @@ public class SetUtils {
             }
             index++;
         }
-//
-//        for(int r : roots){
-//            int elemCount = 0;
-//            for(int e : arr){
-//                if(e >= 0 && findRoot(e, arr) == r) elemCount++;
-//            }
-//            if(elemCount <= sizeLimit) roots.remove((Integer)r);
-//        }
 
         return roots;
     }

@@ -2,12 +2,14 @@ package sample;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.TextAlignment;
 
 public class SlidersController {
+    @FXML
+    private ScrollPane previewImgScrollPane;
     @FXML
     private ImageView bnwImgView;
     @FXML
@@ -15,13 +17,7 @@ public class SlidersController {
     @FXML
     private Label brightnessThresholdLabel, noiseFilterLevel;
 
-    private Image previewImage;
     private ImageProcessor imgProc;
-    private Controller sourceController;
-
-    public void setSourceController(Controller sourceController) {
-        this.sourceController = sourceController;
-    }
 
     public void addSliderListeners(){
         Label[] labels = {brightnessThresholdLabel, noiseFilterLevel};
@@ -33,7 +29,6 @@ public class SlidersController {
 
         brightnessThresholdSlider.valueProperty().addListener((observable, wasChanging, isChanging)-> brightnessThresholdLabel.setText(String.valueOf((brightnessThresholdSlider.valueProperty().intValue()))));
         brightnessThresholdSlider.valueChangingProperty().addListener((observableValue, wasChanging, isChanging) -> {
-//            if(!isChanging) sourceController.setModifiedImage(new ActionEvent());
             if(!isChanging) bnwImgView.setImage(imgProc.getBnWImage());
         });
 
@@ -57,4 +52,10 @@ public class SlidersController {
         this.imgProc = imgProc;
         bnwImgView.setImage(imgProc.getBnWImage());
     }
+
+    public void setImageResizable() {
+        bnwImgView.fitWidthProperty().bind(previewImgScrollPane.widthProperty());
+        bnwImgView.fitHeightProperty().bind(previewImgScrollPane.heightProperty());
+    }
 }
+
