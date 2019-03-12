@@ -8,6 +8,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
  <top>
@@ -22,11 +23,11 @@
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#revertImgToOriginal" text="Reset" />
+                  <MenuItem mnemonicParsing="false" onAction="#countBirds" text="Count Birds" />
                   <!--<CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />-->
                   <!--<CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />-->
                   <!--<CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#countBirds" text="Count Birds" />
                   <!--<MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />-->
           </items>
         </Menu>
@@ -43,7 +44,11 @@
          <content>
           <FlowPane fx:id="imagePane">
              <children>
-                <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
+                  <StackPane>
+                     <children>
+                      <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
              </children>
           </FlowPane>
          </content>

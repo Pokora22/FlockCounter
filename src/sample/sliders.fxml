@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SlidersController">
+   <top>
+      <HBox maxHeight="50.0" prefHeight="75.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox maxHeight="50.0" maxWidth="120.0">
+               <children>
+                  <Label minHeight="-Infinity" prefHeight="20.0" text="Brightness Threshold" />
+                  <Label layoutX="10.0" layoutY="10.0" minHeight="-Infinity" prefHeight="20.0" text="Noise Threshold" />
+                  <!--<Label layoutX="10.0" layoutY="44.0" minHeight="-Infinity" prefHeight="20.0" text="Brightness" />-->
+                  <!--<Label layoutX="10.0" layoutY="61.0" minHeight="-Infinity" prefHeight="20.0" text="Contrast" />-->
+                  <!--<Label layoutX="10.0" layoutY="78.0" minHeight="-Infinity" prefHeight="20.0" text="Saturation" />-->
+               </children>
+            </VBox>
+            <VBox maxHeight="50.0">
+               <children>
+                  <Slider fx:id="brightnessThresholdSlider" majorTickUnit="1.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
+                  <Slider fx:id="noiseSlider" layoutX="10.0" layoutY="10.0" majorTickUnit="1.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
+                  <!--<Slider fx:id="blueSlider1" layoutX="10.0" layoutY="38.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
+                  <!--<Slider fx:id="blueSlider11" layoutX="10.0" layoutY="52.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
+                  <!--<Slider layoutX="10.0" layoutY="66.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
+               </children>
+            </VBox>
+            <VBox maxHeight="50.0" maxWidth="40.0">
+               <children>
+                  <Label fx:id="brightnessThresholdLabel" minHeight="-Infinity" prefHeight="20.0" text="Label" />
+                  <Label fx:id="noiseFilterLevel" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />
+                  <!--<Label fx:id="brightnessValueLabel" layoutX="10.0" layoutY="44.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->
+                  <!--<Label fx:id="contrastValueLabel" layoutX="10.0" layoutY="61.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->
+                  <!--<Label fx:id="saturationValueLabel" layoutX="10.0" layoutY="78.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </top>
    <center>
-      <VBox>
-         <children>
-            <Slider fx:id="brightnessThresholdSlider" majorTickUnit="1.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
-            <Slider fx:id="noiseSlider" layoutX="10.0" layoutY="10.0" majorTickUnit="1.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />
-            <!--<Slider fx:id="blueSlider1" layoutX="10.0" layoutY="38.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
-            <!--<Slider fx:id="blueSlider11" layoutX="10.0" layoutY="52.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
-            <!--<Slider layoutX="10.0" layoutY="66.0" majorTickUnit="5.0" minHeight="-Infinity" minorTickCount="1" prefHeight="20.0" snapToTicks="true" value="100.0" />-->
-         </children>
-      </VBox>
-   </center>
-   <right>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="brightnessThresholdLabel" minHeight="-Infinity" prefHeight="20.0" text="Label" />
-            <Label fx:id="noiseFilterLevel" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />
-            <!--<Label fx:id="brightnessValueLabel" layoutX="10.0" layoutY="44.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->
-            <!--<Label fx:id="contrastValueLabel" layoutX="10.0" layoutY="61.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->
-            <!--<Label fx:id="saturationValueLabel" layoutX="10.0" layoutY="78.0" minHeight="-Infinity" prefHeight="20.0" text="Label" />-->
-         </children>
-         <BorderPane.margin>
-            <Insets left="10.0" />
-         </BorderPane.margin>
-      </VBox>
-   </right>
-   <left>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <Label minHeight="-Infinity" prefHeight="20.0" text="Brightness Threshold" />
-            <Label layoutX="10.0" layoutY="10.0" minHeight="-Infinity" prefHeight="20.0" text="Noise Threshold" />
-            <!--<Label layoutX="10.0" layoutY="44.0" minHeight="-Infinity" prefHeight="20.0" text="Brightness" />-->
-            <!--<Label layoutX="10.0" layoutY="61.0" minHeight="-Infinity" prefHeight="20.0" text="Contrast" />-->
-            <!--<Label layoutX="10.0" layoutY="78.0" minHeight="-Infinity" prefHeight="20.0" text="Saturation" />-->
-         </children>
-         <BorderPane.margin>
-            <Insets right="5.0" />
-         </BorderPane.margin>
-      </VBox>
-   </left>
-   <bottom>
       <ScrollPane fx:id="previewImgScrollPane" hbarPolicy="NEVER" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
             <FlowPane prefHeight="200.0" prefWidth="200.0">
@@ -59,5 +53,5 @@
             </FlowPane>
          </content>
       </ScrollPane>
-   </bottom>
+   </center>
 </BorderPane>
