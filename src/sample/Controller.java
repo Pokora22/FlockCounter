@@ -45,6 +45,7 @@ public class Controller {
         imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
         resetMenuTicks();
         mainImageView.setImage(imgProc.getImage());
+        viewSliders(actionEvent);
     }
 
     @FXML
@@ -98,6 +99,7 @@ public class Controller {
         slidersController.addSliderListeners();
         slidersController.initSliderValues(50, 0);
         slidersController.setSourceController(this);
+        slidersController.setPreviewImage(imgProc);
         sliderStage.show();
     }
 
