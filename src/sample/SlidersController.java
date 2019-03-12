@@ -48,4 +48,9 @@ public class SlidersController {
     public Slider getBlueSlider() {
         return blueSlider;
     }
+
+    public void initSliderValues(double brightness, double noise) {
+        brightnessThresholdSlider.setValue(brightness);
+        noiseSlider.setValue(noise);
+    }
 }

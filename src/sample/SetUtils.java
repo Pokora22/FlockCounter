@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SetUtils {
-    ArrayList<Integer> roots;
-
     public SetUtils(){}
 
     public int[] getSortedSets(int[] arr){
@@ -28,7 +26,7 @@ public class SetUtils {
     }
 
     public ArrayList<Integer> getRoots(int[] arr){
-        roots = new ArrayList<>();
+        ArrayList<Integer> roots = new ArrayList<>();
         for(int i : arr){
             if(i >= 0) {
                 int root = findRoot(i, arr);
@@ -39,7 +37,8 @@ public class SetUtils {
         return roots;
     }
 
-    public void removeSmallSets(int sizeLimit, int[] arr){ //TODO: This can throw null pointer. Overall better way needed.
+    public ArrayList<Integer> getSizeFilteredRoots(int sizeLimit, int[] arr){ //TODO: This can throw null pointer. Overall better way needed.
+        ArrayList<Integer> roots = getRoots(arr);
         for(int r : roots){
             int elemCount = 0;
             for(int e : arr){
@@ -47,6 +46,8 @@ public class SetUtils {
             }
             if(elemCount <= sizeLimit) roots.remove(r);
         }
+
+        return roots;
     }
 
     public void join(int childPosition, int parentPosition, int[] arr) {

@@ -9,8 +9,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-import java.util.HashSet;
-
 public class ImageProcessor {
 
     private Image imageLoaded;
@@ -32,24 +30,20 @@ public class ImageProcessor {
         WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        for(int root : sutil.getRoots(pixels)){
+        for(int root : sutil.getSizeFilteredRoots(noiseFactor.get() ,pixels)){
             int minX = (int)imageLoaded.getWidth();
             int maxX = 0;
             int minY = (int)imageLoaded.getHeight();
             int maxY = 0;
-            int pixelCount = 0;
 
             for (int i = 0; i < pixels.length; i++) {
                 if(pixels[i] >= 0 && sutil.findRoot(pixels[i], pixels) == root){
-                    pixelCount++;
                     if(getPixelXY(i)[0] < minX) minX = getPixelXY(i)[0];
                     if(getPixelXY(i)[0] > maxX) maxX = getPixelXY(i)[0];
                     if(getPixelXY(i)[1] < minY) minY = getPixelXY(i)[1];
                     if(getPixelXY(i)[1] > maxY) maxY = getPixelXY(i)[1];
                 }
             }
-
-            if(pixelCount <= noiseFactor.get()) break;
 
             for (int x = minX; x < maxX; x++) {
                 pixelWriter.setColor(x, minY, Color.RED);
@@ -101,12 +95,11 @@ public class ImageProcessor {
                 else pixels[(y)*(int)imageLoaded.getWidth()+x] = -1;
             }
         }
-        sutil.getRoots(pixels);
-        sutil.removeSmallSets(noiseFactor.get(), pixels);
-        return sutil.getRoots(pixels).size();
+
+        return sutil.getSizeFilteredRoots(noiseFactor.get() ,pixels).size();
     }
 
-    private int checkNeighbourPixels(int x, int y, int root) { //FIXME: Doing this out of order. Root of this pixel(x,y) is not yet set (it's 0) so it will point to wrong space. And if position 0 is white (-1) it will oob. Need to set root first, then check for neighbours!
+    private int checkNeighbourPixels(int x, int y, int root) {
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){
             root = sutil.findRoot(y * (int)imageLoaded.getWidth() + x - 1, pixels); //Offset 0s ?
