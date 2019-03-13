@@ -1,17 +1,13 @@
 package sample;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -24,7 +20,7 @@ public class Controller {
     @FXML
     private ImageView mainImageView;
 
-    private Stage mainStage;
+    private Stage mainStage, previewStage;
     private File selectedFile;
     private ImageProcessor imgProc;
 
@@ -38,7 +34,7 @@ public class Controller {
         if (selectedFile == null) return;
         imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
         mainImageView.setImage(imgProc.getImage());
-        viewSliders(actionEvent);
+        viewPreviewWindow(actionEvent);
     }
 
     @FXML
@@ -58,8 +54,8 @@ public class Controller {
     }
 
     @FXML
-    private void viewSliders(ActionEvent actionEvent) {
-        if(imgProc == null) return;
+    private void viewPreviewWindow(ActionEvent actionEvent) {
+        if(previewStage != null) previewStage.close();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sliders.fxml"));
         Parent root;
         try {
@@ -73,16 +69,16 @@ public class Controller {
         imgProc.bindBrightnessSlider(slidersController.getBrightnessThresholdSlider().valueProperty());
         imgProc.bindNoiseSlider(slidersController.getNoiseSlider().valueProperty());
 
-        Stage sliderStage = new Stage();
-        sliderStage.setTitle("Process Preview");
-        sliderStage.setX(mainStage.getX()+mainStage.getWidth());
-        sliderStage.setY(mainStage.getY());
-        sliderStage.setScene(new Scene(root, 300, 275));
+        previewStage = new Stage();
+        previewStage.setTitle("Process Preview");
+        previewStage.setX(mainStage.getX()+mainStage.getWidth());
+        previewStage.setY(mainStage.getY());
+        previewStage.setScene(new Scene(root, 300, 275));
         slidersController.addSliderListeners();
         slidersController.initSliderValues(50, 0);
         slidersController.setPreviewImage(imgProc);
         slidersController.setImageResizable();
-        sliderStage.show();
+        previewStage.show();
     }
 
     public void countBirds(ActionEvent actionEvent) {
