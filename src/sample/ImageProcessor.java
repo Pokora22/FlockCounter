@@ -9,6 +9,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+
 public class ImageProcessor {
 
     private Image imageLoaded;
@@ -121,6 +123,10 @@ public class ImageProcessor {
         }
 
         return root;
+    }
+
+    public ArrayList<Integer> getLabelPositions(){
+         return sutil.getSizeFilteredRoots(noiseFactor.get(), pixels);
     }
 
     public void bindBrightnessSlider(DoubleProperty prop){

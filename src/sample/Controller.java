@@ -3,11 +3,17 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -15,6 +21,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class Controller {
+    @FXML
+    private FlowPane paneLabels;
+    @FXML
+    private StackPane mainWindowStackPane;
+    @FXML
+    private CheckMenuItem menuCheckPreviewWindow;
     @FXML
     private ScrollPane imageScrollPane;
     @FXML
@@ -45,6 +57,10 @@ public class Controller {
     public void setImageResizable() {
         mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
         mainImageView.fitHeightProperty().bind(imageScrollPane.heightProperty());
+        mainWindowStackPane.prefWidthProperty().bind(imageScrollPane.widthProperty());
+        mainWindowStackPane.prefHeightProperty().bind(imageScrollPane.heightProperty());
+        paneLabels.prefWidthProperty().bind(imageScrollPane.widthProperty());
+        paneLabels.prefHeightProperty().bind(imageScrollPane.heightProperty());
     }
 
     @FXML
@@ -79,12 +95,46 @@ public class Controller {
         slidersController.setPreviewImage(imgProc);
         slidersController.setImageResizable();
         previewStage.show();
+        menuCheckPreviewWindow.setSelected(true);
     }
+    
 
     public void countBirds(ActionEvent actionEvent) {
         if(imgProc == null) return;
         System.out.println("Birds found: " + imgProc.findBirds());
         mainImageView.setImage(imgProc.drawBounds());
+        addLabels();
+    }
+
+    private void addLabels(){
+        int birdNo = 1;
+        paneLabels.getChildren().clear();
+        double xOffset = paneLabels.getWidth()/imgProc.getImage().getWidth();
+        double yOffset = paneLabels.getHeight()/imgProc.getImage().getHeight(); //TODO: Offset is against whole panel size, which not necessarily matches image proportions
+
+        System.out.println("xOffset = " + xOffset);
+        System.out.println("yOffset = " + yOffset);
+
+        //TODO: Label position is not adjusting against pane size. Try grid pane? Possible solution: https://stackoverflow.com/questions/41175632/javafx-autoresize-auto-position
+        for(int i : imgProc.getLabelPositions()){
+            Label label = new Label();
+            label.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+            label.setText(String.valueOf(birdNo++));
+            label.setTranslateX(imgProc.getPixelXY(i)[0] * xOffset);
+            label.setTranslateY(imgProc.getPixelXY(i)[1] * yOffset);
+            paneLabels.getChildren().add(label);
+        }
+    }
+
+    @FXML
+    private void togglePreview(ActionEvent actionEvent) {
+        if(previewStage == null) {
+            menuCheckPreviewWindow.setSelected(false);
+            return;
+        }
+
+        if(menuCheckPreviewWindow.isSelected()) previewStage.show();
+        else previewStage.hide();
     }
 
     public void setMainStage(Stage mainStage) {

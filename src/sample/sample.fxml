@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -28,6 +29,7 @@
                   <!--<CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />-->
                   <!--<CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <CheckMenuItem fx:id="menuCheckPreviewWindow" mnemonicParsing="false" onAction="#togglePreview" text="Show Preview Window" />
                   <!--<MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />-->
           </items>
         </Menu>
@@ -44,9 +46,10 @@
          <content>
           <FlowPane fx:id="imagePane">
              <children>
-                  <StackPane>
+                  <StackPane fx:id="mainWindowStackPane">
                      <children>
                       <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
+                        <FlowPane fx:id="paneLabels" prefHeight="200.0" prefWidth="200.0" />
                      </children>
                   </StackPane>
              </children>
