@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -38,6 +39,7 @@ public class Controller {
     private Stage mainStage, previewStage;
     private File selectedFile;
     private ImageProcessor imgProc;
+    Scale scale;
 
     @FXML
     private void openImageFile(ActionEvent actionEvent) {
@@ -60,10 +62,26 @@ public class Controller {
     public void setImageResizable() {
         mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
         mainImageView.fitHeightProperty().bind(imageScrollPane.heightProperty());
-//        mainWindowStackPane.prefWidthProperty().bind(imageScrollPane.widthProperty());
-//        mainWindowStackPane.prefHeightProperty().bind(imageScrollPane.heightProperty());
         paneLabels.prefWidthProperty().bind(imageScrollPane.widthProperty());
         paneLabels.prefHeightProperty().bind(imageScrollPane.heightProperty());
+
+        scale = new Scale();
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        groupLabels.getTransforms().addAll(scale);
+
+        imageScrollPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+            updateLabelsScale();
+        });
+        imageScrollPane.heightProperty().addListener((obs, oldVal, newVal) ->{
+            updateLabelsScale();
+        });
+    }
+
+    private void updateLabelsScale() {
+
+        scale.setX(mainImageView.maxWidth(mainImageView.getFitWidth())/imgProc.getImage().getWidth());
+        scale.setY(mainImageView.maxHeight(mainImageView.getFitHeight())/imgProc.getImage().getHeight());
     }
 
     @FXML
@@ -111,20 +129,19 @@ public class Controller {
 
     private void addLabels(){
         int birdNo = 1;
-        double xScale, yScale;
         paneLabels.getChildren().clear();
-        xScale = mainImageView.maxWidth(mainImageView.getFitWidth())/imgProc.getImage().getWidth();
-        yScale = mainImageView.maxHeight(mainImageView.getFitHeight())/imgProc.getImage().getHeight();
 
         for(int i : imgProc.getLabelPositions()){
             Label label = new Label();
             label.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
             label.setText(String.valueOf(birdNo++));
 
-            label.setLayoutX((imgProc.getPixelXY(i)[0] * xScale));
-            label.setLayoutY(imgProc.getPixelXY(i)[1] * yScale);
+            label.setLayoutX(imgProc.getPixelXY(i)[0]);
+            label.setLayoutY(imgProc.getPixelXY(i)[1]);
             paneLabels.getChildren().add(label);
         }
+
+        updateLabelsScale();
     }
 
     @FXML
@@ -143,7 +160,7 @@ public class Controller {
     }
 
     public void setTestStyles(){
-//        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
 //        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
 //        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
         groupLabels.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
