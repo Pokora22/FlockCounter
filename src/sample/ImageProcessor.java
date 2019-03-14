@@ -55,6 +55,7 @@ public class ImageProcessor {
                 pixelWriter.setColor(minX, y, Color.RED);
                 pixelWriter.setColor(maxX, y, Color.RED);
             }
+            pixelWriter.setColor(getPixelXY(root)[0], getPixelXY(root)[1], Color.YELLOW);
         }
 
         return writableImage;

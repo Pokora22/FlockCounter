@@ -23,11 +23,12 @@ public class Main extends Application {
         Controller controller = loader.getController();
 
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(root, 800, 553));
         controller.setMainStage(primaryStage);
         primaryStage.show();
 
         controller.setImageResizable();
+//        controller.setTestStyles();
     }
 
 

@@ -108,20 +108,24 @@ public class Controller {
 
     private void addLabels(){
         int birdNo = 1;
+        double xOffset, yOffset, widthOffset, heightOffset;
         paneLabels.getChildren().clear();
-        double xOffset = paneLabels.getWidth()/imgProc.getImage().getWidth();
-        double yOffset = paneLabels.getHeight()/imgProc.getImage().getHeight(); //TODO: Offset is against whole panel size, which not necessarily matches image proportions
-
-        System.out.println("xOffset = " + xOffset);
-        System.out.println("yOffset = " + yOffset);
+        xOffset = mainImageView.maxWidth(mainImageView.getFitWidth())/imgProc.getImage().getWidth();
+        yOffset = mainImageView.maxHeight(mainImageView.getFitHeight())/imgProc.getImage().getHeight();
+        widthOffset = (mainImageView.getFitWidth() - imgProc.getImage().getWidth() * xOffset) / 2;
+        heightOffset = (mainImageView.getFitHeight() - imgProc.getImage().getHeight() * yOffset) / 2;
 
         //TODO: Label position is not adjusting against pane size. Try grid pane? Possible solution: https://stackoverflow.com/questions/41175632/javafx-autoresize-auto-position
         for(int i : imgProc.getLabelPositions()){
             Label label = new Label();
             label.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
             label.setText(String.valueOf(birdNo++));
-            label.setTranslateX(imgProc.getPixelXY(i)[0] * xOffset);
-            label.setTranslateY(imgProc.getPixelXY(i)[1] * yOffset);
+
+
+
+            label.setTranslateX((imgProc.getPixelXY(i)[0] * xOffset + widthOffset));
+            System.out.println(imgProc.getPixelXY(i)[0] + ", " + (label.getTranslateX()/xOffset - widthOffset));
+            label.setTranslateY(imgProc.getPixelXY(i)[1] * yOffset + heightOffset);
             paneLabels.getChildren().add(label);
         }
     }
@@ -139,5 +143,11 @@ public class Controller {
 
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
+    }
+
+    public void setTestStyles(){
+        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
+        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
     }
 }
