@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
@@ -22,9 +23,11 @@ import java.io.IOException;
 
 public class Controller {
     @FXML
-    private FlowPane paneLabels;
+    private Group groupLabels;
     @FXML
-    private StackPane mainWindowStackPane;
+    private Pane paneLabels;
+//    @FXML
+//    private StackPane mainWindowStackPane;
     @FXML
     private CheckMenuItem menuCheckPreviewWindow;
     @FXML
@@ -57,8 +60,8 @@ public class Controller {
     public void setImageResizable() {
         mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
         mainImageView.fitHeightProperty().bind(imageScrollPane.heightProperty());
-        mainWindowStackPane.prefWidthProperty().bind(imageScrollPane.widthProperty());
-        mainWindowStackPane.prefHeightProperty().bind(imageScrollPane.heightProperty());
+//        mainWindowStackPane.prefWidthProperty().bind(imageScrollPane.widthProperty());
+//        mainWindowStackPane.prefHeightProperty().bind(imageScrollPane.heightProperty());
         paneLabels.prefWidthProperty().bind(imageScrollPane.widthProperty());
         paneLabels.prefHeightProperty().bind(imageScrollPane.heightProperty());
     }
@@ -108,24 +111,18 @@ public class Controller {
 
     private void addLabels(){
         int birdNo = 1;
-        double xOffset, yOffset, widthOffset, heightOffset;
+        double xScale, yScale;
         paneLabels.getChildren().clear();
-        xOffset = mainImageView.maxWidth(mainImageView.getFitWidth())/imgProc.getImage().getWidth();
-        yOffset = mainImageView.maxHeight(mainImageView.getFitHeight())/imgProc.getImage().getHeight();
-        widthOffset = (mainImageView.getFitWidth() - imgProc.getImage().getWidth() * xOffset) / 2;
-        heightOffset = (mainImageView.getFitHeight() - imgProc.getImage().getHeight() * yOffset) / 2;
+        xScale = mainImageView.maxWidth(mainImageView.getFitWidth())/imgProc.getImage().getWidth();
+        yScale = mainImageView.maxHeight(mainImageView.getFitHeight())/imgProc.getImage().getHeight();
 
-        //TODO: Label position is not adjusting against pane size. Try grid pane? Possible solution: https://stackoverflow.com/questions/41175632/javafx-autoresize-auto-position
         for(int i : imgProc.getLabelPositions()){
             Label label = new Label();
             label.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
             label.setText(String.valueOf(birdNo++));
 
-
-
-            label.setTranslateX((imgProc.getPixelXY(i)[0] * xOffset + widthOffset));
-            System.out.println(imgProc.getPixelXY(i)[0] + ", " + (label.getTranslateX()/xOffset - widthOffset));
-            label.setTranslateY(imgProc.getPixelXY(i)[1] * yOffset + heightOffset);
+            label.setLayoutX((imgProc.getPixelXY(i)[0] * xScale));
+            label.setLayoutY(imgProc.getPixelXY(i)[1] * yScale);
             paneLabels.getChildren().add(label);
         }
     }
@@ -146,8 +143,9 @@ public class Controller {
     }
 
     public void setTestStyles(){
-        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
-        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
-        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
+//        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+//        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
+//        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
+        groupLabels.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
     }
 }

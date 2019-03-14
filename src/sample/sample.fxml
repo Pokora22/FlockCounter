@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -9,6 +10,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
 <BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
@@ -46,10 +48,18 @@
          <content>
           <FlowPane fx:id="imagePane">
              <children>
-                  <StackPane fx:id="mainWindowStackPane">
+                  <StackPane>
                      <children>
-                      <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
-                        <FlowPane fx:id="paneLabels" prefHeight="200.0" prefWidth="200.0" />
+                        <Pane>
+                           <children>
+                            <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </Pane>
+                        <Group fx:id="groupLabels">
+                           <children>
+                              <Pane fx:id="paneLabels" />
+                           </children>
+                        </Group>
                      </children>
                   </StackPane>
              </children>
