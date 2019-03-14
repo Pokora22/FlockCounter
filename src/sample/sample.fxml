@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Group?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
@@ -44,27 +41,15 @@
     </MenuBar>
  </top>
  <center>
-      <ScrollPane fx:id="imageScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
-         <content>
-          <FlowPane fx:id="imagePane">
-             <children>
-                  <StackPane>
-                     <children>
-                        <Pane>
-                           <children>
-                            <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
-                           </children>
-                        </Pane>
-                        <Group fx:id="groupLabels">
-                           <children>
-                              <Pane fx:id="paneLabels" />
-                           </children>
-                        </Group>
-                     </children>
-                  </StackPane>
-             </children>
-          </FlowPane>
-         </content>
-      </ScrollPane>
+      <StackPane fx:id="stackPane">
+         <children>
+            <Pane>
+               <children>
+                <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </Pane>
+            <Pane fx:id="paneLabels" />
+         </children>
+      </StackPane>
  </center>
 </BorderPane>

@@ -5,15 +5,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 
-public class SlidersController {
+public class PreviewController {
     @FXML
-    private ScrollPane previewImgScrollPane;
+    private Pane previewPane;
     @FXML
     private ImageView bnwImgView;
     @FXML
-    private Slider brightnessThresholdSlider, noiseSlider, blueSlider;
+    private Slider brightnessThresholdSlider, noiseSlider;
     @FXML
     private Label brightnessThresholdLabel, noiseFilterLevel;
 
@@ -54,8 +55,8 @@ public class SlidersController {
     }
 
     public void setImageResizable() {
-        bnwImgView.fitWidthProperty().bind(previewImgScrollPane.widthProperty());
-        bnwImgView.fitHeightProperty().bind(previewImgScrollPane.heightProperty());
+        bnwImgView.fitWidthProperty().bind(previewPane.widthProperty());
+        bnwImgView.fitHeightProperty().bind(previewPane.heightProperty());
     }
 }
 

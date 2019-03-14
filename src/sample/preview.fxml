@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SlidersController">
+<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.PreviewController">
    <top>
       <HBox maxHeight="50.0" prefHeight="75.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <children>
@@ -44,14 +43,10 @@
       </HBox>
    </top>
    <center>
-      <ScrollPane fx:id="previewImgScrollPane" hbarPolicy="NEVER" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
-         <content>
-            <FlowPane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <ImageView fx:id="bnwImgView" pickOnBounds="true" preserveRatio="true" />
-               </children>
-            </FlowPane>
-         </content>
-      </ScrollPane>
+      <Pane fx:id="previewPane">
+         <children>
+            <ImageView fx:id="bnwImgView" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </Pane>
    </center>
 </BorderPane>

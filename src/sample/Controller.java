@@ -4,17 +4,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -24,15 +21,11 @@ import java.io.IOException;
 
 public class Controller {
     @FXML
-    private Group groupLabels;
+    private StackPane stackPane;
     @FXML
     private Pane paneLabels;
-//    @FXML
-//    private StackPane mainWindowStackPane;
     @FXML
     private CheckMenuItem menuCheckPreviewWindow;
-    @FXML
-    private ScrollPane imageScrollPane;
     @FXML
     private ImageView mainImageView;
 
@@ -60,20 +53,20 @@ public class Controller {
     }
 
     public void setImageResizable() {
-        mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
-        mainImageView.fitHeightProperty().bind(imageScrollPane.heightProperty());
-        paneLabels.prefWidthProperty().bind(imageScrollPane.widthProperty());
-        paneLabels.prefHeightProperty().bind(imageScrollPane.heightProperty());
+        mainImageView.fitWidthProperty().bind(stackPane.widthProperty());
+        mainImageView.fitHeightProperty().bind(stackPane.heightProperty());
+        paneLabels.prefWidthProperty().bind(stackPane.widthProperty());
+        paneLabels.prefHeightProperty().bind(stackPane.heightProperty());
 
         scale = new Scale();
         scale.setPivotX(0);
         scale.setPivotY(0);
-        groupLabels.getTransforms().addAll(scale);
+        paneLabels.getTransforms().addAll(scale);
 
-        imageScrollPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+        stackPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             updateLabelsScale();
         });
-        imageScrollPane.heightProperty().addListener((obs, oldVal, newVal) ->{
+        stackPane.heightProperty().addListener((obs, oldVal, newVal) ->{
             updateLabelsScale();
         });
     }
@@ -93,7 +86,7 @@ public class Controller {
     @FXML
     private void viewPreviewWindow(ActionEvent actionEvent) {
         if(previewStage != null) previewStage.close();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sliders.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("preview.fxml"));
         Parent root;
         try {
             root = loader.load();
@@ -101,20 +94,20 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        SlidersController slidersController = loader.getController();
+        PreviewController previewController = loader.getController();
 
-        imgProc.bindBrightnessSlider(slidersController.getBrightnessThresholdSlider().valueProperty());
-        imgProc.bindNoiseSlider(slidersController.getNoiseSlider().valueProperty());
+        imgProc.bindBrightnessSlider(previewController.getBrightnessThresholdSlider().valueProperty());
+        imgProc.bindNoiseSlider(previewController.getNoiseSlider().valueProperty());
 
         previewStage = new Stage();
         previewStage.setTitle("Process Preview");
         previewStage.setX(mainStage.getX()+mainStage.getWidth());
         previewStage.setY(mainStage.getY());
         previewStage.setScene(new Scene(root, 300, 275));
-        slidersController.addSliderListeners();
-        slidersController.initSliderValues(50, 0);
-        slidersController.setPreviewImage(imgProc);
-        slidersController.setImageResizable();
+        previewController.addSliderListeners();
+        previewController.initSliderValues(50, 0);
+        previewController.setPreviewImage(imgProc);
+        previewController.setImageResizable();
         previewStage.show();
         menuCheckPreviewWindow.setSelected(true);
     }
@@ -160,9 +153,9 @@ public class Controller {
     }
 
     public void setTestStyles(){
-        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+//        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
 //        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
 //        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
-        groupLabels.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+//        groupLabels.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
     }
 }
