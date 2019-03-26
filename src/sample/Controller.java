@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.image.*;
@@ -160,5 +161,11 @@ public class Controller {
 //        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
 //        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
 //        groupLabels.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+    }
+
+    public void guesstimate(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("My guess on number of birds based on size differences is: " + imgProc.guesstimate() + " birds.");
+        alert.showAndWait();
     }
 }

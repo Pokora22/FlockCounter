@@ -116,6 +116,20 @@ public class ImageProcessor {
         return (int)((percentage/100)*big);
     }
 
+    public int guesstimate(){
+        ArrayList<Integer> sizes = new ArrayList<Integer>(sutil.getSizes().values());
+        Collections.sort(sizes);
+        
+        int sum = 0;
+        for(int s : sizes) sum += s;
+        double mean = sum/sizes.size();
+
+        int guess = sizes.size();
+        for(int s : sizes) if (s > mean) guess += (Math.floor(s/mean) - 1);
+
+        return guess;
+    }
+
     private int checkNeighbourPixels(int x, int y, int root) {
 
         if(x > 0 && isColorBelowThreshold(pReader.getColor(x-1, y))){

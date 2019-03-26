@@ -29,6 +29,7 @@
                   <!--<CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <CheckMenuItem fx:id="menuCheckPreviewWindow" mnemonicParsing="false" onAction="#togglePreview" text="Show Preview Window" />
+                  <MenuItem mnemonicParsing="false" onAction="#guesstimate" text="Guesstimate Birds" />
                   <!--<MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />-->
           </items>
         </Menu>
