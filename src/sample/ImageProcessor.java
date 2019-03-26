@@ -9,9 +9,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class ImageProcessor {
@@ -103,17 +101,19 @@ public class ImageProcessor {
             }
         }
 
-        pixelRoots = new ArrayList<>(sutil.getSizeFilteredRoots(sutil.getRoots(pixels), getPercentile(noiseFactor.get())));
+        pixelRoots = new ArrayList<>(sutil.getSizeFilteredRoots(sutil.getRoots(pixels), autoDenoise(noiseFactor.get())));
 
         return pixelRoots.size();
     }
 
-    private int getPercentile(double i) {
+    private int autoDenoise(double percentage) {
         ArrayList<Integer> sizes = new ArrayList<Integer>(sutil.getSizes().values());
         Collections.sort(sizes);
 
-        int index = (int) Math.ceil((i / 100) * sizes.size());
-        return sizes.get(index)/2; //Using 50% size of the quantile
+        int big = 0;
+        for(int s : sizes) if(s > big) big = s;
+
+        return (int)((percentage/100)*big);
     }
 
     private int checkNeighbourPixels(int x, int y, int root) {
