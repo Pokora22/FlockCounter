@@ -1,17 +1,18 @@
 package sample;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -20,35 +21,21 @@ import java.io.IOException;
 
 public class Controller {
     @FXML
-    private CheckMenuItem bnwMenuItem, redChannelMenuItem, greenChannelMenuItem, blueChannelMenuItem;
+    private StackPane stackPane;
     @FXML
-    private ScrollPane imageScrollPane;
+    private Pane paneLabels;
     @FXML
-    private FlowPane imagePane;
+    private CheckMenuItem menuCheckPreviewWindow;
     @FXML
     private ImageView mainImageView;
-    @FXML
-    private BorderPane mainBorderPane;
 
-
-    private SimpleDoubleProperty greenChannel = new SimpleDoubleProperty(100);
-    private SimpleDoubleProperty blueChannel = new SimpleDoubleProperty(100);
-
-    private Stage mainStage;
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-
+    private Stage mainStage, previewStage;
     private File selectedFile;
     private ImageProcessor imgProc;
-    private int setIndex;
-    private PixelReader pixelReader;
-    int[] sets;
+    Scale scale;
 
     @FXML
     private void openImageFile(ActionEvent actionEvent) {
-
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.gif", "*.bmp"));
@@ -56,39 +43,50 @@ public class Controller {
         selectedFile = fileChooser.showOpenDialog(mainStage);
         if (selectedFile == null) return;
         imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
-        resetMenuTicks();
         mainImageView.setImage(imgProc.getImage());
+        viewPreviewWindow(actionEvent);
     }
 
     @FXML
     private void closeApp(ActionEvent actionEvent) {
-
+        System.exit(0);
     }
 
-
     public void setImageResizable() {
-        mainImageView.fitWidthProperty().bind(imageScrollPane.widthProperty());
-        mainImageView.fitHeightProperty().bind(imageScrollPane.heightProperty());
+        mainImageView.fitWidthProperty().bind(stackPane.widthProperty());
+        mainImageView.fitHeightProperty().bind(stackPane.heightProperty());
+        paneLabels.prefWidthProperty().bind(stackPane.widthProperty());
+        paneLabels.prefHeightProperty().bind(stackPane.heightProperty());
+
+        scale = new Scale();
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        paneLabels.getTransforms().addAll(scale);
+
+        stackPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+            updateLabelsScale();
+        });
+        stackPane.heightProperty().addListener((obs, oldVal, newVal) ->{
+            updateLabelsScale();
+        });
+    }
+
+    private void updateLabelsScale() {
+
+        scale.setX(mainImageView.maxWidth(mainImageView.getFitWidth())/imgProc.getImage().getWidth());
+        scale.setY(mainImageView.maxHeight(mainImageView.getFitHeight())/imgProc.getImage().getHeight());
     }
 
     @FXML
     private void revertImgToOriginal(ActionEvent actionEvent) {
+        if(imgProc == null) return;
         mainImageView.setImage(imgProc.getImage());
-        resetMenuTicks();
-    }
-
-    private void resetMenuTicks() {
-        bnwMenuItem.setSelected(false);
-    }
-
-    public void setModifiedImage(ActionEvent actionEvent) {
-        Image imageToShow = bnwMenuItem.isSelected() ? imgProc.getBnWImage() : imgProc.getImage();
-        if(imageToShow != null) mainImageView.setImage(imageToShow);
     }
 
     @FXML
-    private void viewSliders(ActionEvent actionEvent) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sliders.fxml"));
+    private void viewPreviewWindow(ActionEvent actionEvent) {
+        if(previewStage != null) previewStage.close();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("preview.fxml"));
         Parent root;
         try {
             root = loader.load();
@@ -96,24 +94,68 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        SlidersController controller = loader.getController();
+        PreviewController previewController = loader.getController();
 
-        imgProc.bindBrightnessSlider(controller.getBrightnessThresholdSlider().valueProperty());
-        greenChannel.bind(controller.getGreenSlider().valueProperty());
-        blueChannel.bind(controller.getBlueSlider().valueProperty());
+        imgProc.bindBrightnessSlider(previewController.getBrightnessThresholdSlider().valueProperty());
+        imgProc.bindNoiseSlider(previewController.getNoiseSlider().valueProperty());
 
-        Stage sliderStage = new Stage();
-        sliderStage.setTitle("Sliders?");
-        sliderStage.setX(mainStage.getX()+mainStage.getWidth());
-        sliderStage.setY(mainStage.getY());
-        sliderStage.setScene(new Scene(root, 300, 75));
-        controller.addSliderListeners();
-        controller.setSourceController(this);
-        sliderStage.show();
+        previewStage = new Stage();
+        previewStage.setTitle("Process Preview");
+        previewStage.setX(mainStage.getX()+mainStage.getWidth());
+        previewStage.setY(mainStage.getY());
+        previewStage.setScene(new Scene(root, 300, 275));
+        previewController.addSliderListeners();
+        previewController.initSliderValues(50, 0);
+        previewController.setPreviewImage(imgProc);
+        previewController.setImageResizable();
+        previewStage.show();
+        menuCheckPreviewWindow.setSelected(true);
+    }
+    
+
+    public void countBirds(ActionEvent actionEvent) {
+        if(imgProc == null) return;
+        System.out.println("Birds found: " + imgProc.findBirds());
+        mainImageView.setImage(imgProc.drawBounds());
+        addLabels();
     }
 
-    public void test(ActionEvent actionEvent) {
-        System.out.println(imgProc.findBirds());
-        mainImageView.setImage(imgProc.drawBounds(sets));
+    private void addLabels(){
+        int birdNo = 1;
+        paneLabels.getChildren().clear();
+
+        for(int i : imgProc.getLabelPositions()){
+            Label label = new Label();
+            label.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+            label.setText(String.valueOf(birdNo++));
+
+            label.setLayoutX(imgProc.getPixelXY(i)[0]);
+            label.setLayoutY(imgProc.getPixelXY(i)[1]);
+            paneLabels.getChildren().add(label);
+        }
+
+        updateLabelsScale();
+    }
+
+    @FXML
+    private void togglePreview(ActionEvent actionEvent) {
+        if(previewStage == null) {
+            menuCheckPreviewWindow.setSelected(false);
+            return;
+        }
+
+        if(menuCheckPreviewWindow.isSelected()) previewStage.show();
+        else previewStage.hide();
+    }
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public void setTestStyles(){
+//        imageScrollPane.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
+//        mainImageView.setStyle(" -fx-border-color: #ff53bd; -fx-border-width: 10; -fx-border-style: dashed;");
+//        paneLabels.setStyle(" -fx-border-color: blue; -fx-border-width: 10; -fx-border-style: dotted;");
+//        groupLabels.setStyle(" -fx-background-color: red; -fx-border-width: 10;");
     }
 }

@@ -2,18 +2,9 @@ package sample;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
-public class SetUtils implements Runnable{
-    private int[] arr;
-    private ArrayList<Integer> roots;
-    private HashMap<Integer, Integer> setSizes;
-
-    public SetUtils(int[] arr){
-        this.arr = arr;
-        roots = new ArrayList<>();
-        setSizes = new HashMap<>();
-    }
+public class SetUtils {
+    public SetUtils(){}
 
     public int[] getSortedSets(int[] arr){
         int[] sets = arr.clone();
@@ -30,57 +21,41 @@ public class SetUtils implements Runnable{
         return sets;
     }
 
-    private void fillSets(){
+    public int findRoot(int position, int[] arr){
+        return arr[position] == position? position : findRoot(arr[position], arr);
+    }
+
+    public ArrayList<Integer> getRoots(int[] arr){
+        ArrayList<Integer> roots = new ArrayList<>();
         for(int i : arr){
             if(i >= 0) {
-                int root = findRoot(i);
-                if (!roots.contains(root)){
-                    roots.add(root);
-                    setSizes.put(root, 1);
-                }
-                else setSizes.replace(root, setSizes.get(root)+1);
+                int root = findRoot(i, arr);
+                if (!roots.contains(root)) roots.add(root);
             }
         }
-    }
 
-    public int findRoot(int position){
-        return arr[position] == position? position : findRoot(arr[position]);
-    }
-
-    public ArrayList<Integer> getRoots(){
         return roots;
     }
 
-    public ArrayList<Integer> getSizeFilteredRoots(int sizeLimit){
-        ArrayList<Integer> filteredRoots = new ArrayList<>(roots);
-//        int index = 0;
-//        while(index < filteredRoots.size()){
-//            int elemCount = 0;
-//            for(int e : arr){
-//                if(e >= 0 && findRoot(e, arr) == filteredRoots.get(index)) elemCount++;
-//            }
-//            if(elemCount <= sizeLimit){
-//                filteredRoots.remove((Integer)filteredRoots.get(index));
-//                continue;
-//            }
-//            index++;
-//        }
+    public ArrayList<Integer> getSizeFilteredRoots(int sizeLimit, int[] arr){
+        ArrayList<Integer> roots = getRoots(arr);
+        int index = 0;
+        while(index < roots.size()){
+            int elemCount = 0;
+            for(int e : arr){
+                if(e >= 0 && findRoot(e, arr) == roots.get(index)) elemCount++;
+            }
+            if(elemCount <= sizeLimit){
+                roots.remove((Integer)roots.get(index));
+                continue;
+            }
+            index++;
+        }
 
-        for(Integer root : roots) if(setSizes.get(root) > sizeLimit) filteredRoots.add(root);
-
-        return filteredRoots;
+        return roots;
     }
 
-    public void join(int childPosition, int parentPosition) {
-        arr[findRoot(childPosition)] = findRoot(parentPosition);
-    }
-
-    public int[] getArr(){
-        return arr;
-    }
-
-    @Override
-    public void run() {
-        fillSets();
+    public void join(int childPosition, int parentPosition, int[] arr) {
+        arr[findRoot(childPosition, arr)] = findRoot(parentPosition, arr);
     }
 }

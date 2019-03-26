@@ -28,6 +28,7 @@ public class Main extends Application {
         primaryStage.show();
 
         controller.setImageResizable();
+//        controller.setTestStyles();
     }
 
 

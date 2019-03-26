@@ -4,13 +4,13 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
  <top>
     <MenuBar BorderPane.alignment="CENTER">
       <menus>
@@ -23,13 +23,12 @@
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#revertImgToOriginal" text="Reset" />
-                  <CheckMenuItem fx:id="bnwMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="View in Black and White" />
+                  <MenuItem mnemonicParsing="false" onAction="#countBirds" text="Count Birds" />
                   <!--<CheckMenuItem fx:id="redChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Red Channel" />-->
                   <!--<CheckMenuItem fx:id="greenChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Green Channel" />-->
                   <!--<CheckMenuItem fx:id="blueChannelMenuItem" mnemonicParsing="false" onAction="#setModifiedImage" text="Blue Channel" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#viewSliders" text="View Color Sliders" />
-                  <MenuItem mnemonicParsing="false" onAction="#test" text="Test" />
+                  <CheckMenuItem fx:id="menuCheckPreviewWindow" mnemonicParsing="false" onAction="#togglePreview" text="Show Preview Window" />
                   <!--<MenuItem mnemonicParsing="false" onAction="#viewChannels" text="View Color Channels" />-->
           </items>
         </Menu>
@@ -42,14 +41,15 @@
     </MenuBar>
  </top>
  <center>
-      <ScrollPane fx:id="imageScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
-         <content>
-          <FlowPane fx:id="imagePane">
-             <children>
+      <StackPane fx:id="stackPane">
+         <children>
+            <Pane>
+               <children>
                 <ImageView fx:id="mainImageView" pickOnBounds="true" preserveRatio="true" />
-             </children>
-          </FlowPane>
-         </content>
-      </ScrollPane>
+               </children>
+            </Pane>
+            <Pane fx:id="paneLabels" />
+         </children>
+      </StackPane>
  </center>
 </BorderPane>
