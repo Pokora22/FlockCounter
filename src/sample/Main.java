@@ -22,8 +22,8 @@ public class Main extends Application {
         }
         Controller controller = loader.getController();
 
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("Flock Counter.");
+        primaryStage.setScene(new Scene(root, 400, 365));
         controller.setMainStage(primaryStage);
         primaryStage.show();
 

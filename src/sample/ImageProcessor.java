@@ -9,7 +9,10 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class ImageProcessor {
 
@@ -19,6 +22,7 @@ public class ImageProcessor {
     private SimpleIntegerProperty noiseFactor = new SimpleIntegerProperty(0);
     private SetUtils sutil;
     private int[] pixels;
+    private ArrayList<Integer> pixelRoots;
 
 
     public ImageProcessor(Image imageLoaded){
@@ -32,7 +36,7 @@ public class ImageProcessor {
         WritableImage writableImage = new WritableImage(imageLoaded.getPixelReader(),(int)imageLoaded.getWidth(), (int)imageLoaded.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        for(int root : sutil.getSizeFilteredRoots(noiseFactor.get() ,pixels)){
+        for(int root : pixelRoots){
             int minX = (int)imageLoaded.getWidth();
             int maxX = 0;
             int minY = (int)imageLoaded.getHeight();
@@ -99,7 +103,17 @@ public class ImageProcessor {
             }
         }
 
-        return sutil.getSizeFilteredRoots(noiseFactor.get() ,pixels).size();
+        pixelRoots = new ArrayList<>(sutil.getSizeFilteredRoots(sutil.getRoots(pixels), getPercentile(noiseFactor.get())));
+
+        return pixelRoots.size();
+    }
+
+    private int getPercentile(double i) {
+        ArrayList<Integer> sizes = new ArrayList<Integer>(sutil.getSizes().values());
+        Collections.sort(sizes);
+
+        int index = (int) Math.ceil((i / 100) * sizes.size());
+        return sizes.get(index)/2; //Using 50% size of the quantile
     }
 
     private int checkNeighbourPixels(int x, int y, int root) {
@@ -127,7 +141,7 @@ public class ImageProcessor {
     }
 
     public ArrayList<Integer> getLabelPositions(){
-         return sutil.getSizeFilteredRoots(noiseFactor.get(), pixels);
+         return pixelRoots;
     }
 
     public void bindBrightnessSlider(DoubleProperty prop){

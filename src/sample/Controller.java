@@ -81,6 +81,8 @@ public class Controller {
     @FXML
     private void revertImgToOriginal(ActionEvent actionEvent) {
         if(imgProc == null) return;
+        paneLabels.getChildren().clear();
+        mainStage.setTitle("Flock counter waiting ...");
         mainImageView.setImage(imgProc.getImage());
     }
 
@@ -104,9 +106,9 @@ public class Controller {
         previewStage.setTitle("Process Preview");
         previewStage.setX(mainStage.getX()+mainStage.getWidth());
         previewStage.setY(mainStage.getY());
-        previewStage.setScene(new Scene(root, 300, 275));
+        previewStage.setScene(new Scene(root, 400, 365));
         previewController.addSliderListeners();
-        previewController.initSliderValues(50, 0);
+        previewController.initSliderValues(50, 5);
         previewController.setPreviewImage(imgProc);
         previewController.setImageResizable();
         previewStage.show();
@@ -116,7 +118,7 @@ public class Controller {
 
     public void countBirds(ActionEvent actionEvent) {
         if(imgProc == null) return;
-        System.out.println("Birds found: " + imgProc.findBirds());
+        mainStage.setTitle("Flock counter found: " + imgProc.findBirds() + " birds.");
         mainImageView.setImage(imgProc.drawBounds());
         addLabels();
     }
