@@ -43,6 +43,7 @@ public class Controller {
         selectedFile = fileChooser.showOpenDialog(mainStage);
         if (selectedFile == null) return;
         imgProc = new ImageProcessor(new Image(selectedFile.toURI().toString()));
+        paneLabels.getChildren().clear();
         mainImageView.setImage(imgProc.getImage());
         viewPreviewWindow(actionEvent);
     }
