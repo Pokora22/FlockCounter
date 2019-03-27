@@ -70,4 +70,12 @@ public class SetUtils {
     public HashMap<Integer, Integer> getSizes() {
         return sizes;
     }
+
+    public HashMap<Integer, Integer> getFilteredSizes(int filter){
+        HashMap<Integer, Integer> filteredSizes = new HashMap<>();
+
+        for (Integer set : sizes.keySet()) if(sizes.get(set) > filter) filteredSizes.put(set, sizes.get(set));
+
+        return filteredSizes;
+    }
 }

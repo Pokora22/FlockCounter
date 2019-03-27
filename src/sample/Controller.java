@@ -164,6 +164,7 @@ public class Controller {
     }
 
     public void guesstimate(ActionEvent actionEvent) {
+        if(imgProc == null) return;
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("My guess on number of birds based on size differences is: " + imgProc.guesstimate() + " birds.");
         alert.showAndWait();

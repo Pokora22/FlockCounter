@@ -117,15 +117,24 @@ public class ImageProcessor {
     }
 
     public int guesstimate(){
-        ArrayList<Integer> sizes = new ArrayList<Integer>(sutil.getSizes().values());
+        if(sutil.getSizes() == null) findBirds();
+        ArrayList<Integer> sizes = new ArrayList<Integer>(sutil.getFilteredSizes(autoDenoise(noiseFactor.get())).values());
         Collections.sort(sizes);
         
         int sum = 0;
         for(int s : sizes) sum += s;
         double mean = sum/sizes.size();
 
+        System.out.println("mean = " + mean);
+
         int guess = sizes.size();
-        for(int s : sizes) if (s > mean) guess += (Math.floor(s/mean) - 1);
+        System.out.println("guess = " + guess);
+        for(int s : sizes) if (s > mean) {
+            System.out.println("Old guess = " + guess);
+            guess += (Math.floor(s/mean) - 1);
+            System.out.println("New guess = " + guess);
+            System.out.println();
+        }
 
         return guess;
     }
